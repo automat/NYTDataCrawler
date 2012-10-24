@@ -18,7 +18,9 @@
     <script src="resource/lakes.js" type="text/javascript"></script>
     <script src="resource/rivers.js" type="text/javascript"></script>
     <script src="resource/tinycountries.js" type="text/javascript"></script>
-    <script src="js/map.js"></script>
+    <script src="resource/geographicRegions.js" type="text/javascript"></script>
+
+    <script src="js/imports.js"></script>
     <script type="text/javascript">
 
         function init()
@@ -27,7 +29,7 @@
 
 
             var countries  = new NYTRessource().getCountriesData();
-            var map        = new Map('canvasContainer',{width:window.innerWidth,height:window.innerHeight});
+            var map        = new Map('canvasContainer');
             var oceans     = new MapLayer('oceans',OCEANS,{fillStyle:'rgb(250,250,250)'});
             var gratulices = new MapLayer('gratulices',GRATULICES,{strokeStyle:'rgb(240,240,240)'});
             var land       = new MapLayer('land',LAND,{fillStyle:'#fff',shadowColor:'rgba(0,0,0,0.25)',
@@ -41,6 +43,7 @@
             var rivers     = new MapLayer('rivers',RIVERS,{strokeStyle:'rgb(220,220,220)'});
 
             var regions    = new MapLayer('regions',REGIONS,{strokeStyle:'rgb(150,150,150)'});
+            var georegions    = new MapLayer('georegions',GEOGRAPHIC_REGIONS_POLYS,{strokeStyle:'rgb(150,150,150)'});
             var countries  = new MapLayer('countries',COUNTRIES,{fillStyle:'rgb(200,200,200)'});
 
             countries.excludeElement(countries.getElementsWithPropertyAndKey('NAME','Antarctica'));
@@ -54,22 +57,38 @@
 
             var countryCenters = new DataLayer('countriescenter',COUNTRIE_INFO_GEOJSON,{fillStyle:'rgba(255,50,50,1)',strokeStyle:'rgb(255,50,50)'});
 
+            var i = -1;
+            var e;
+
+            /*
+            while(++i < countryCenters.elements.length)
+            {
+                e = countryCenters.elements[i];
+
+                if(e.properties.TYPE == 'Sovereign country')countryCenters.removeElement(e);
+
+            }
+*/
+
+
+
             map.addLayer(oceans);
             map.addLayer(gratulices);
             //map.addLayer(geoLines);
            // map.addLayer(land);
 
             map.addLayer(countries);
-           // map.addLayer(urbanAreas);
+            //map.addLayer(georegions);
             map.addLayer(lakes);
             map.addLayer(rivers);
+            //map.addLayer(regions);
             map.addLayer(boundaries);
             map.addLayer(countryCenters);
 
             map.render();
 
 
-           // map.addLayer(regions);
+
             //map.addLayer(popplaces);
             //map.addLayer(tinycountries);
 
