@@ -69,6 +69,31 @@ AbstractMapLayer.prototype.excludeElement  = function(element)
     element.exclude = true;
 };
 
+AbstractMapLayer.prototype.includeElement  = function(element)
+{
+    element.exclude = true;
+};
+
+AbstractMapLayer.prototype.excludeElementsWithPropertyAndKey = function(property,key)
+{
+    var i = -1;
+    var e;
+    while (++i < this.elements.length)
+    {
+        e = this.elements[i];
+
+        if (e.properties[property] == key)
+        {
+            e.exclude = true;
+        }
+    }
+};
+
+AbstractMapLayer.prototype.__setElementProperty = function(element,property0,property1,key)
+{
+    element[property0][property1]=key;
+};
+
 
 AbstractMapLayer.prototype.setElementStyle = function(element,style)
 {
@@ -164,3 +189,8 @@ AbstractMapLayer.prototype.getElementBoundingBox = function (element)
     return [xMin,yMin,xMax,yMax];
 
 };
+
+function AbstractAnimationMapLayer(id,data,style)
+{
+
+}

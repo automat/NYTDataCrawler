@@ -46,7 +46,7 @@ Map.prototype.addLayer = function (layer)
 
 Map.prototype.render = function()
 {
-    
+
 
     var i = -1;
     while(++i<this.layers.length)

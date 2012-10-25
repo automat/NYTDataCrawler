@@ -8,6 +8,9 @@
 //
 
 
-document.write('<script src="js/mapLayerAbstract.js" type="text/javascript"></script>');
-document.write('<script src="js/mapLayer.js" type="text/javascript"></script>');
-document.write('<script src="js/map.js" type="text/javascript"></script>');
+document.write('<script src="js/map/mapLayerAbstract.js" type="text/javascript"></script>');
+document.write('<script src="js/map/mapLayer.js" type="text/javascript"></script>');
+document.write('<script src="js/map/map.js" type="text/javascript"></script>');
+document.write('<script src="js/data/nytressource.js" type="text/javascript"></script>');
+
+document.write('<script src="js/project.js" type="text/javascript"></script>');
