@@ -9,9 +9,20 @@
 
 function Project()
 {
-    this.testMap();
+    //this.testMap();
+    this.testNYTArticleSearch();
 
 }
+
+Project.prototype.testNYTArticleSearch = function()
+{
+    var articleSearchQueryRequestURL;
+    articleSearchQueryRequestURL = NYTArticleSearchQuery.query().
+                                   searchKeywordsInField(["germany"],FIELD_TEXT).
+                                   requestURL();
+    console.log(articleSearchQueryRequestURL);
+
+};
 
 Project.prototype.testMap = function()
 {
