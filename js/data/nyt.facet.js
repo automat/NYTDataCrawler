@@ -324,13 +324,13 @@ NYTFacet.prototype.setFacetQuery = function(facetquery)
     else this.query = facetquery;
 };
 
-NYTFacet.prototype.string = function()
+NYTFacet.prototype.toString = function()
 {
     return this.isReturnFacet ? this.name : this.name + this.query;
 };
-
+/*
 NYTFacet.prototype.toString = function()
 {
     return "name= " + this.name + " query= " + this.query + " isReturnFacet= " + this.isReturnFacet;
 };
-
+*/

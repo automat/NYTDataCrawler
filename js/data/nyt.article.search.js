@@ -75,10 +75,10 @@ NYTArticleSearchQuery.prototype.setDateEndWithYear = function(year,month,day)
 // Search Keywords
 //
 
-NYTArticleSearchQuery.prototype.searchKeywords = function()
+NYTArticleSearchQuery.prototype.searchKeywords = function(keywords)
 {
     this._setString(this._queryKeywords,
-                    arguments,
+                    keywords,
                     this._searchSet ? PREFIX_FIELD_TEXT : PREFIX_EMPTY,
                     SEPERATOR_SPACE,
                     this._searchSet ? PREFIX_SPACE : null);
@@ -107,7 +107,7 @@ NYTArticleSearchQuery.prototype.searchKeywordsInField = function(keywords,field)
     return this;
 };
 
-NYTArticleSearchQuery.prototype.excludeKeywords = function()
+NYTArticleSearchQuery.prototype.excludeKeywords = function(keywords)
 {
     var excludePrefix = this._excludeSet ? this._excludePrefixForField(FIELD_TEXT) : PREFIX_EXCLUDE;
 
@@ -131,8 +131,8 @@ NYTArticleSearchQuery.prototype.exludeKeywordsInField = function(keywords,field)
     var prefix = PREFIX_EXCLUDE+this._prefixForField(field);
 
     this._setString(this._queryKeywords,
-                    arguments,
                     keywords,
+                    prefix,
                     SEPERATOR_SPACE,
                     this._excludeSet ? SEPERATOR_SPACE : null);
 
@@ -194,6 +194,7 @@ NYTArticleSearchQuery.prototype._setString = function(string,args,prefix,seperat
 {
     var firstArg            = args[0];
     var formatIsFacet       = firstArg instanceof NYTFacet;
+    //console.log(formatIsFacet);
     var formatIsReturnFacet = formatIsFacet && firstArg.isReturnFacet;
 
     var first = formatIsFacet ? firstArg.string() : this._ANDStringFromString(firstArg);
@@ -215,7 +216,11 @@ NYTArticleSearchQuery.prototype._setString = function(string,args,prefix,seperat
             NYTUtils.throwException(RAISE_INVALID_FACET,FORMAT_INVALID_FACET,a.name);
         }
 
-        string.append(seperator+prefix+formatIsFacet?a.string():this._ANDStringFromString(a));
+
+
+        string.append(seperator+
+                      prefix+
+                      formatIsFacet?a:this._ANDStringFromString(a));
     }
 
 
@@ -352,8 +357,7 @@ NYTArticleSearchQuery.prototype._exception = function()
 
 NYTArticleSearchQuery.prototype._ANDStringFromString = function(string)
 {
-    return string.indexOf(' ') > 0 ? "'"+string+"'" : string;
-
+    return string.indexOf(' ') > 0 ? new MutableString("'").append(string).append("'") : string;
 };
 
 NYTArticleSearchQuery.prototype.requestURL = function()
@@ -361,6 +365,26 @@ NYTArticleSearchQuery.prototype.requestURL = function()
     var s = NYT_ARTICLE_SEARCH_API_BASE_URL+this.resultQuery();
     return encodeURI(s);
 
+};
+
+NYTArticleSearchQuery.prototype.clear = function()
+{
+    this._searchSet = false;
+    this._excludeSet = false;
+    this._facetesSet = false;
+    this._returnFacetesSet = false;
+    this._returnFieldsSet = false;
+
+    this._queryKeywords = new MutableString();
+    this._queryExcludes = new MutableString();
+    this._queryFacets = new MutableString();
+    this._queryReturnFields = new MutableString();
+    this._queryReturnFacets = new MutableString();
+
+    this._paramBeginDate = '';
+    this._paramEndDate = '';
+
+    this._offset = -1;
 };
 
 

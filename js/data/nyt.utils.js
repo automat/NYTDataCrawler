@@ -30,91 +30,106 @@ NYTUtils.logArgs = function(args)
 
 function MutableString()
 {
-    this.text = arguments.length > 0 ? arguments[0] : "";
+    this.__text = arguments.length > 0 ? arguments[0] : "";
 }
 
 MutableString.prototype.charAt = function(index)
 {
-    return this.text.charAt(index);
+    return this.__text.charAt(index);
 };
 
 MutableString.prototype.charCodeAt = function(index)
 {
-    return this.text.charCodeAt(index);
+    return this.__text.charCodeAt(index);
 };
 
 MutableString.prototype.concat = function()
 {
-    return new MutableString(this.text.concat(arguments));
+    return new MutableString(this.__text.concat(arguments));
 };
 
 MutableString.prototype.indexOf = function(searchvalue,start)
 {
-    return this.text.indexOf(searchvalue,start);
+    return this.__text.indexOf(searchvalue,start);
 };
 
 MutableString.prototype.lastIndexOf = function(searchvalue,start)
 {
-    return this.text.lastIndexOf(searchvalue,start);
+    return this.__text.lastIndexOf(searchvalue,start);
 };
 
 MutableString.prototype.match = function(regex)
 {
-    return this.text.match(regex);
+    return this.__text.match(regex);
 };
 
 MutableString.prototype.replace = function(searchvalue,newvalue)
 {
-    return this.text.replace(searchvalue,newvalue);
+    return this.__text.replace(searchvalue,newvalue);
 };
 
 MutableString.prototype.search = function(searchvalue)
 {
-    return this.text.search(searchvalue);
+    return this.__text.search(searchvalue);
 };
 
 MutableString.prototype.slice = function(start,end)
 {
-    return new MutableString(this.text.slice(start,end));
+    return new MutableString(this.__text.slice(start,end));
 };
 
 MutableString.prototype.split = function(separator,limit)
 {
-    return this.text.split(separator,limit);
+    return this.__text.split(separator,limit);
 };
 
 MutableString.prototype.substr = function(start,length)
 {
-    return this.text.substr(start,length);
+    return this.__text.substr(start,length);
 };
 
 MutableString.prototype.substring = function(from, to)
 {
-    return this.text.substr(from, to);
+    return this.__text.substr(from, to);
 };
 
 MutableString.prototype.toLowerCase = function()
 {
-    return this.text.toLowerCase();
+    return this.__text.toLowerCase();
 };
 
 MutableString.prototype.toUpperCase = function()
 {
-    return this.text.toUpperCase();
+    return this.__text.toUpperCase();
 };
 
 //noinspection JSValidateTypes
 MutableString.prototype.length = function()
 {
-    return this.text.length;
+    return this.__text.length;
 };
 
 MutableString.prototype.append = function(string)
 {
-    this.text += string;
+    this.__text += string;
 };
+
+MutableString.prototype.prepend = function(string)
+{
+   this.__text = string + this.__text;
+};
+
+MutableString.prototype.clear = function()
+{
+    this.__text = "";
+};
+
+MutableString.prototype.copy = function()
+{
+    return new MutableString(this.__text);
+}
 
 MutableString.prototype.toString = function()
 {
-    return this.text;
+    return this.__text;
 };

@@ -113,7 +113,7 @@ var RETURN_SMALL_IMAGE_WIDTH = "small_image_width";
 // The text field consists of title + byline + body (combined in an OR search)
 // and is the default field for keyword searches. For more information, see Constructing a Search Query.
 //
-var FIELD_TEXT = "text";
+var FIELD_TEXT = "__text";
 
 // title
 //
@@ -159,7 +159,7 @@ var PREFIX_EXCLUDE = "-";
 var PREFIX_EMPTY   = "";
 var PREFIX_SPACE = " ";
 
-var PREFIX_FIELD_TEXT     = "text:";
+var PREFIX_FIELD_TEXT     = "__text:";
 var PREFIX_FIELD_TITLE    = "title:";
 var PREFIX_FIELD_ABSTRACT = "abstract:";
 var PREFIX_FIELD_BODY     = "body:";

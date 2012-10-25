@@ -12,8 +12,6 @@ function Project()
     //this.testMap();
     var h = 'hy';
 
-    console.log(NYTUtils.objectEqualsObjects(h,'lalal','1efdf','hy'));
-
     this.testNYTArticleSearch();
 
 
@@ -24,11 +22,16 @@ function Project()
 
 Project.prototype.testNYTArticleSearch = function()
 {
-    var articleSearchQuery = NYTArticleSearchQuery.query();
+    var query = NYTArticleSearchQuery.query();
 
     //test 1
 
-    articleSearchQuery.searchKeywords('absantee ballot');
+    query.searchKeywords('absantee ballot');
+
+    console.log(query.requestURL());
+
+    //query.clear();
+    //query.searchKeywordsInField('absantee ballot',FIELD_TITLE);
 
 
     /*
@@ -36,7 +39,7 @@ Project.prototype.testNYTArticleSearch = function()
                                    searchKeywordsInField(["germany"],FIELD_TEXT).
                                    requestURL();
     */
-    console.log(articleSearchQuery.requestURL());
+
 
 };
 
