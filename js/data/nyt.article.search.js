@@ -7,6 +7,10 @@
 //
 //
 
+/*
+ * http://developer.nytimes.com/docs/read/article_search_api
+ */
+
 function NYTArticleSearchQuery()
 {
     this._searchSet        = false;
@@ -15,11 +19,11 @@ function NYTArticleSearchQuery()
     this._returnFacetesSet = false;
     this._returnFieldsSet  = false;
 
-    this._queryKeywords     = '';
-    this._queryExcludes     = '';
-    this._queryFacets       = '';
-    this._queryReturnFields = '';
-    this._queryReturnFacets = '';
+    this._queryKeywords     = new MutableString();
+    this._queryExcludes     = new MutableString();
+    this._queryFacets       = new MutableString();
+    this._queryReturnFields = new MutableString();
+    this._queryReturnFacets = new MutableString();
 
     this._paramBeginDate = '';
     this._paramEndDate   = '';
@@ -79,7 +83,8 @@ NYTArticleSearchQuery.prototype.searchKeywords = function()
                     SEPERATOR_SPACE,
                     this._searchSet ? PREFIX_SPACE : null);
 
-    this._searchSet = true;
+
+   this._searchSet = true;
     return this;
 };
 
@@ -87,7 +92,7 @@ NYTArticleSearchQuery.prototype.searchKeywordsInField = function(keywords,field)
 {
     if(!this._fieldIsValid(field))
     {
-        _exception(RAISE_INVALID_FIELD,FORMAT_INVALID_FIELD,field);
+        NYTUtils.throwException(RAISE_INVALID_FIELD,FORMAT_INVALID_FIELD,field);
     }
 
     var prefix = this._prefixForField(field);
@@ -120,7 +125,7 @@ NYTArticleSearchQuery.prototype.exludeKeywordsInField = function(keywords,field)
 {
     if(!this._fieldIsValid(field))
     {
-        _exception(RAISE_INVALID_FIELD,FORMAT_INVALID_FIELD,field);
+        NYTUtils.throwException(RAISE_INVALID_FIELD,FORMAT_INVALID_FIELD,field);
     }
 
     var prefix = PREFIX_EXCLUDE+this._prefixForField(field);
@@ -151,7 +156,7 @@ NYTArticleSearchQuery.prototype.addReturnFields = function()
 {
     if(!this._returnFieldIsValid(arguments[0]))
     {
-        _exception(RAISE_INVALID_RETURN_FIELD,FORMAT_INVALID_RETURN_FIELD,arguments[0]);
+        NYTUtils.throwException(RAISE_INVALID_RETURN_FIELD,FORMAT_INVALID_RETURN_FIELD,arguments[0]);
     }
 
     this._setString(this._queryReturnFields,
@@ -168,7 +173,7 @@ NYTArticleSearchQuery.prototype.addReturnFacetes = function()
 {
     if(!arguments[0].isReturnFacet)
     {
-        _exception(RAISE_INVALID_FACET,FORMAT_INVALID_FACET,arguments[0]);
+        NYTUtils.throwException(RAISE_INVALID_FACET,FORMAT_INVALID_FACET,arguments[0]);
     }
 
     this._setString(this._queryReturnFacets,
@@ -193,9 +198,12 @@ NYTArticleSearchQuery.prototype._setString = function(string,args,prefix,seperat
 
     var first = formatIsFacet ? firstArg.string() : this._ANDStringFromString(firstArg);
 
-    string+=prefix ? (firstSeperator ? firstSeperator+prefix : prefix) :
-                     (firstSeperator ? firstSeperator+PREFIX_EMPTY : PREFIX_EMPTY) +
-                     first;
+
+
+    string.append(prefix ? (firstSeperator ? firstSeperator+prefix : prefix) :
+                           (firstSeperator ? firstSeperator+PREFIX_EMPTY : PREFIX_EMPTY) +
+                            first);
+
     var i = 0;
     var a;
     while(++i < args.length)
@@ -204,10 +212,10 @@ NYTArticleSearchQuery.prototype._setString = function(string,args,prefix,seperat
 
         if(formatIsReturnFacet && !a.isReturnFacet())
         {
-            _exception(RAISE_INVALID_FACET,FORMAT_INVALID_FACET,a.name);
+            NYTUtils.throwException(RAISE_INVALID_FACET,FORMAT_INVALID_FACET,a.name);
         }
 
-        string+=seperator+prefix+formatIsFacet?a.string():this._ANDStringFromString(a);
+        string.append(seperator+prefix+formatIsFacet?a.string():this._ANDStringFromString(a));
     }
 
 
@@ -220,20 +228,20 @@ NYTArticleSearchQuery.prototype._setString = function(string,args,prefix,seperat
 
 NYTArticleSearchQuery.prototype._fieldIsValid = function(field)
 {
-    return _equalsObjectInList(field,FIELD_ABSTRACT,
-                                     FIELD_TITLE,
-                                     FIELD_BODY,
-                                     FIELD_TEXT,
-                                     FIELD_BYLINE);
+    return NYTUtils.objectEqualsObjects(field,FIELD_ABSTRACT,
+                                              FIELD_TITLE,
+                                              FIELD_BODY,
+                                              FIELD_TEXT,
+                                              FIELD_BYLINE);
 };
 
 NYTArticleSearchQuery.prototype._returnFieldIsValid = function(returnField)
 {
-    return _equalsObjectInList(returnField, RETURN_ABSTRACT,
-                                            RETURN_AUTHOR,
-                                            RETURN_BODY,
-                                            RETURN_BYLINE,
-                                            RETURN_CLASSIFIERS,
+    return NYTUtils.objectEqualsObjects(returnField, RETURN_ABSTRACT,
+                                                     RETURN_AUTHOR,
+                                                     RETURN_BODY,
+                                                     RETURN_BYLINE,
+                                                        RETURN_CLASSIFIERS,
                                             RETURN_COLUMN,
                                             RETURN_COMMENTS,
                                             RETURN_DAY_OF_WEEK,

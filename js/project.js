@@ -10,17 +10,33 @@
 function Project()
 {
     //this.testMap();
+    var h = 'hy';
+
+    console.log(NYTUtils.objectEqualsObjects(h,'lalal','1efdf','hy'));
+
     this.testNYTArticleSearch();
+
+
 
 }
 
+
+
 Project.prototype.testNYTArticleSearch = function()
 {
-    var articleSearchQueryRequestURL;
+    var articleSearchQuery = NYTArticleSearchQuery.query();
+
+    //test 1
+
+    articleSearchQuery.searchKeywords('absantee ballot');
+
+
+    /*
     articleSearchQueryRequestURL = NYTArticleSearchQuery.query().
                                    searchKeywordsInField(["germany"],FIELD_TEXT).
                                    requestURL();
-    console.log(articleSearchQueryRequestURL);
+    */
+    console.log(articleSearchQuery.requestURL());
 
 };
 
