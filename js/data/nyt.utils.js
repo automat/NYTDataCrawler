@@ -9,11 +9,15 @@
 
 var NYTUtils = {};
 
-NYTUtils.throwException = function()
+NYTUtils.throwException = function(message,hint,object)
 {
+    throw message.replace("%@",object)+hint;
+
+    /*
     var e='',i=-1,l=arguments.length;
-    while(++i<l)e+=arguments.length;
+    while(++i<l)e+=arguments[i];
     throw e;
+    */
 };
 
 
@@ -32,6 +36,11 @@ function MutableString()
 {
     this.__text = arguments.length > 0 ? arguments[0] : "";
 }
+
+MutableString.prototype.set = function(text)
+{
+    this.__text = text;
+};
 
 MutableString.prototype.charAt = function(index)
 {
@@ -103,11 +112,12 @@ MutableString.prototype.toUpperCase = function()
     return this.__text.toUpperCase();
 };
 
-//noinspection JSValidateTypes
-MutableString.prototype.length = function()
+
+MutableString.prototype.size = function()
 {
-    return this.__text.length;
+   return this.__text.length;
 };
+
 
 MutableString.prototype.append = function(string)
 {
@@ -127,7 +137,7 @@ MutableString.prototype.clear = function()
 MutableString.prototype.copy = function()
 {
     return new MutableString(this.__text);
-}
+};
 
 MutableString.prototype.toString = function()
 {

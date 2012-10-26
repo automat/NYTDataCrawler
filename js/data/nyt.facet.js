@@ -245,8 +245,9 @@ NYTFacet.facetWithType = function(type)
 
 NYTFacet.prototype.setFacet = function(facet)
 {
-    if(_equalsObjectInList(facet,FACET_CLASSIFIERS,
-                                 FACET_COLUMN,
+    if(
+        NYTUtils.objectEqualsObjects(facet,FACET_CLASSIFIERS,
+                                           FACET_COLUMN,
                                  FACET_DATE,
                                  FACET_DAY_OF_WEEK,
                                  FACET_DBPEDIA_RESOURCE,
@@ -277,47 +278,47 @@ NYTFacet.prototype.setFacet = function(facet)
 
     }
     else if(
-       _equalsObjectInList(facet,RETURN_CLASSIFIERS,
-                                 RETURN_CLASSIFIERS,
-                                 RETURN_DAY_OF_WEEK,
-                                 RETURN_DBPEDIA_RESOURCE,
-                                 RETURN_DBPEDIA_RESOURCE_URL,
-                                 RETURN_DES,
-                                 RETURN_DESK,
-                                 RETURN_GEO,
-                                 RETURN_MATERIAL_TYPE,
-                                 RETURN_NYTD_DES,
-                                 RETURN_NYTD_GEO,
-                                 RETURN_NYTD_ORG,
-                                 RETURN_NYTD_PER,
-                                 RETURN_NYTD_SECTION,
-                                 RETURN_NYTD_WORKS_MENTIONED,
-                                 RETURN_ORG,
-                                 RETURN_PAGE,
-                                 RETURN_PER,
-                                 RETURN_PUBLICATION_DAY,
-                                 RETURN_PUBLICATION_MONTH,
-                                 RETURN_PUBLICATION_YEAR,
-                                 RETURN_SECTION_PAGE,
-                                 RETURN_SOURCE,
-                                 RETURN_WORKS_MENTIONED))
+        NYTUtils.objectEqualsObjects(facet,RETURN_CLASSIFIERS,
+                                           RETURN_CLASSIFIERS,
+                                           RETURN_DAY_OF_WEEK,
+                                           RETURN_DBPEDIA_RESOURCE,
+                                           RETURN_DBPEDIA_RESOURCE_URL,
+                                           RETURN_DES,
+                                           RETURN_DESK,
+                                           RETURN_GEO,
+                                           RETURN_MATERIAL_TYPE,
+                                           RETURN_NYTD_DES,
+                                           RETURN_NYTD_GEO,
+                                           RETURN_NYTD_ORG,
+                                           RETURN_NYTD_PER,
+                                           RETURN_NYTD_SECTION,
+                                           RETURN_NYTD_WORKS_MENTIONED,
+                                           RETURN_ORG,
+                                           RETURN_PAGE,
+                                           RETURN_PER,
+                                           RETURN_PUBLICATION_DAY,
+                                           RETURN_PUBLICATION_MONTH,
+                                           RETURN_PUBLICATION_YEAR,
+                                           RETURN_SECTION_PAGE,
+                                           RETURN_SOURCE,
+                                           RETURN_WORKS_MENTIONED))
     {
         this.name = facet;
         this.isReturnFacet = false;
         return;
     }
 
-    _exception(RAISE_INVALID,FORMAT_WRONG_TYPE,facet);
+    NYTUtils.throwException(RAISE_INVALID,FORMAT_WRONG_TYPE,facet);
 };
 
 NYTFacet.prototype.setFacetQuery = function(facetquery)
 {
     if(this.isReturnFacet)
     {
-        _exception(RAISE_WRONG_TYPE,FORMAT_WRONG_TYPE,facetquery);
+        NYTUtils.throwException(RAISE_WRONG_TYPE,FORMAT_WRONG_TYPE,facetquery);
     }
 
-    if(!_equalsObjectInList(this.name,FACET_DES,FACET_GEO,FACET_ORG,FACET_PER))
+    if(!NYTUtils.objectEqualsObjects(this.name,FACET_DES,FACET_GEO,FACET_ORG,FACET_PER))
     {
         this.query = facetquery.toUpperCase();
     }

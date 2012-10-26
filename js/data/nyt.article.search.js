@@ -49,14 +49,14 @@ NYTArticleSearchQuery.prototype.setOffset = function(offset)
 
 NYTArticleSearchQuery.prototype.setDateBegin = function(yyyymmdd)
 {
-    if(!this._dataIsValid(yyyymmdd))this._exception(RAISE_INVALID_DATE,FORMAT_INVALID_DATE,yyyymmdd);
+    if(!this._dataIsValid(yyyymmdd))NYTUtils.throwException(RAISE_INVALID_DATE,FORMAT_INVALID_DATE,yyyymmdd);
     this._paramBeginDate = yyyymmdd;
     return this;
 };
 
 NYTArticleSearchQuery.prototype.setDateEnd = function(yyyymmdd)
 {
-    if(!this._dataIsValid(yyyymmdd))this._exception(RAISE_INVALID_DATE,FORMAT_INVALID_DATE,yyyymmdd);
+    if(!this._dataIsValid(yyyymmdd))NYTUtils.throwException(RAISE_INVALID_DATE,FORMAT_INVALID_DATE,yyyymmdd);
     this._paramEndDate = yyyymmdd;
     return this;
 };
@@ -96,6 +96,7 @@ NYTArticleSearchQuery.prototype.searchKeywordsInField = function(keywords,field)
     }
 
     var prefix = this._prefixForField(field);
+
 
     this._setString(this._queryKeywords,
                     keywords,
@@ -152,15 +153,15 @@ NYTArticleSearchQuery.prototype.addFacetes = function()
     return this;
 };
 
-NYTArticleSearchQuery.prototype.addReturnFields = function()
+NYTArticleSearchQuery.prototype.addReturnFields = function(returnFields)
 {
-    if(!this._returnFieldIsValid(arguments[0]))
+    if(!this._returnFieldIsValid(returnFields[0]))
     {
-        NYTUtils.throwException(RAISE_INVALID_RETURN_FIELD,FORMAT_INVALID_RETURN_FIELD,arguments[0]);
+        NYTUtils.throwException(RAISE_INVALID_RETURN_FIELD,FORMAT_INVALID_RETURN_FIELD,returnFields[0]);
     }
 
     this._setString(this._queryReturnFields,
-                    arguments,
+                    returnFields,
                     PREFIX_EMPTY,
                     SEPERATOR_COMMA,
                     null);
@@ -169,15 +170,15 @@ NYTArticleSearchQuery.prototype.addReturnFields = function()
     return this;
 };
 
-NYTArticleSearchQuery.prototype.addReturnFacetes = function()
+NYTArticleSearchQuery.prototype.addReturnFacetes = function(returnFacetes)
 {
-    if(!arguments[0].isReturnFacet)
+    if(!returnFacetes[0].isReturnFacet)
     {
-        NYTUtils.throwException(RAISE_INVALID_FACET,FORMAT_INVALID_FACET,arguments[0]);
+        NYTUtils.throwException(RAISE_INVALID_FACET,FORMAT_INVALID_FACET,returnFacetes[0]);
     }
 
     this._setString(this._queryReturnFacets,
-                    arguments,
+                    returnFacetes,
                     PREFIX_EMPTY,
                     SEPERATOR_COMMA,
                     null);
@@ -194,16 +195,12 @@ NYTArticleSearchQuery.prototype._setString = function(string,args,prefix,seperat
 {
     var firstArg            = args[0];
     var formatIsFacet       = firstArg instanceof NYTFacet;
-    //console.log(formatIsFacet);
     var formatIsReturnFacet = formatIsFacet && firstArg.isReturnFacet;
 
-    var first = formatIsFacet ? firstArg.string() : this._ANDStringFromString(firstArg);
+    var first = formatIsFacet ? firstArg : this._ANDStringFromString(firstArg);
 
-
-
-    string.append(prefix ? (firstSeperator ? firstSeperator+prefix : prefix) :
-                           (firstSeperator ? firstSeperator+PREFIX_EMPTY : PREFIX_EMPTY) +
-                            first);
+    string.append((prefix ? (firstSeperator ? firstSeperator+prefix : prefix) :
+                            (firstSeperator ? firstSeperator+PREFIX_EMPTY : PREFIX_EMPTY)) + first);
 
     var i = 0;
     var a;
@@ -216,11 +213,9 @@ NYTArticleSearchQuery.prototype._setString = function(string,args,prefix,seperat
             NYTUtils.throwException(RAISE_INVALID_FACET,FORMAT_INVALID_FACET,a.name);
         }
 
-
-
         string.append(seperator+
                       prefix+
-                      formatIsFacet?a:this._ANDStringFromString(a));
+                      (formatIsFacet?a:this._ANDStringFromString(a)));
     }
 
 
@@ -246,46 +241,46 @@ NYTArticleSearchQuery.prototype._returnFieldIsValid = function(returnField)
                                                      RETURN_AUTHOR,
                                                      RETURN_BODY,
                                                      RETURN_BYLINE,
-                                                        RETURN_CLASSIFIERS,
-                                            RETURN_COLUMN,
-                                            RETURN_COMMENTS,
-                                            RETURN_DAY_OF_WEEK,
-                                            RETURN_DBPEDIA_RESOURCE,
-                                            RETURN_DBPEDIA_RESOURCE_URL,
-                                            RETURN_DES,
-                                            RETURN_DESK,
-                                            RETURN_FACET,
-                                            RETURN_FEE,
-                                            RETURN_GEO,
-                                            RETURN_LEAD_PARAGRAPH,
-                                            RETURN_MATERIAL_TYPE,
-                                            RETURN_MULTIMEDIA,
-                                            RETURN_NYTD_BYLIEN,
-                                            RETURN_NYTD_DES,
-                                            RETURN_NYTD_GEO,
-                                            RETURN_NYTD_ORG,
-                                            RETURN_NYTD_PER,
-                                            RETURN_NYTD_SECTION,
-                                            RETURN_NYTD_TITLE,
-                                            RETURN_NYTD_WORKS_MENTIONED,
-                                            RETURN_ORG,
-                                            RETURN_PAGE,
-                                            RETURN_PER,
-                                            RETURN_PUBLICATION_DAY,
-                                            RETURN_PUBLICATION_MONTH,
-                                            RETURN_PUBLICATION_YEAR,
-                                            RETURN_RELATED_MEDIA,
-                                            RETURN_SECTION_PAGE,
-                                            RETURN_SMALL_IMAGE,
-                                            RETURN_SMALL_IMAGE_HEIGHT,
-                                            RETURN_SMALL_IMAGE_URL,
-                                            RETURN_SMALL_IMAGE_WIDTH,
-                                            RETURN_SOURCE,
-                                            RETURN_TITLE,
-                                            RETURN_TOKENS,
-                                            RETURN_URL,
-                                            RETURN_WORD_COUNT,
-                                            RETURN_WORKS_MENTIONED);
+                                                     RETURN_CLASSIFIERS,
+                                                     RETURN_COLUMN,
+                                                     RETURN_COMMENTS,
+                                                     RETURN_DAY_OF_WEEK,
+                                                     RETURN_DBPEDIA_RESOURCE,
+                                                     RETURN_DBPEDIA_RESOURCE_URL,
+                                                     RETURN_DES,
+                                                     RETURN_DESK,
+                                                     RETURN_FACET,
+                                                     RETURN_FEE,
+                                                     RETURN_GEO,
+                                                     RETURN_LEAD_PARAGRAPH,
+                                                     RETURN_MATERIAL_TYPE,
+                                                     RETURN_MULTIMEDIA,
+                                                     RETURN_NYTD_BYLIEN,
+                                                     RETURN_NYTD_DES,
+                                                     RETURN_NYTD_GEO,
+                                                     RETURN_NYTD_ORG,
+                                                     RETURN_NYTD_PER,
+                                                     RETURN_NYTD_SECTION,
+                                                     RETURN_NYTD_TITLE,
+                                                     RETURN_NYTD_WORKS_MENTIONED,
+                                                     RETURN_ORG,
+                                                     RETURN_PAGE,
+                                                     RETURN_PER,
+                                                     RETURN_PUBLICATION_DAY,
+                                                     RETURN_PUBLICATION_MONTH,
+                                                     RETURN_PUBLICATION_YEAR,
+                                                     RETURN_RELATED_MEDIA,
+                                                     RETURN_SECTION_PAGE,
+                                                     RETURN_SMALL_IMAGE,
+                                                     RETURN_SMALL_IMAGE_HEIGHT,
+                                                     RETURN_SMALL_IMAGE_URL,
+                                                     RETURN_SMALL_IMAGE_WIDTH,
+                                                     RETURN_SOURCE,
+                                                     RETURN_TITLE,
+                                                     RETURN_TOKENS,
+                                                     RETURN_URL,
+                                                     RETURN_WORD_COUNT,
+                                                     RETURN_WORKS_MENTIONED);
 };
 
 NYTArticleSearchQuery.prototype._prefixForField = function(field)
@@ -308,19 +303,19 @@ NYTArticleSearchQuery.prototype.resultQuery = function()
     var result   = '';
     var keywords = this._queryKeywords;
 
-    var excludes = this._queryExcludes.length > 0 ?
+    var excludes = this._queryExcludes.size() > 0 ?
                    SEPERATOR_SPACE + this._queryExcludes :
                    EMPTY_STRING;
 
-    var facets   = this._queryFacets.length > 0 ?
+    var facets   = this._queryFacets.size() > 0 ?
                    SEPERATOR_SPACE + this._queryFacets :
                    EMPTY_STRING;
 
-    var rfacets  = this._queryReturnFacets.length > 0 ?
+    var rfacets  = this._queryReturnFacets.size() > 0 ?
                    RETURN_FACET + this._queryReturnFacets :
                    EMPTY_STRING;
 
-    var rfields  = this._queryReturnFields.length > 0 ?
+    var rfields  = this._queryReturnFields.size() > 0 ?
                    RETURN_FIELD + this._queryReturnFields :
                    EMPTY_STRING;
 
@@ -332,14 +327,14 @@ NYTArticleSearchQuery.prototype.resultQuery = function()
                    PARAM_END_DATE + this._paramEndDate :
                    EMPTY_STRING;
 
-    result+=QUERY+keywords+excludes+facets+rfacets+rfields+pBDate+pEDate+this._apikey;
+    result+=QUERY+keywords+excludes+facets+rfacets+pBDate+pEDate+rfields;
 
     return result;
 };
 
 NYTArticleSearchQuery.prototype._dataIsValid = function(date)
 {
-    return date.length == 6;
+    return date.length == 8;
 };
 
 NYTArticleSearchQuery.prototype._exception = function()
@@ -352,19 +347,17 @@ NYTArticleSearchQuery.prototype._exception = function()
     }
 
     throw m;
-
 };
 
 NYTArticleSearchQuery.prototype._ANDStringFromString = function(string)
 {
-    return string.indexOf(' ') > 0 ? new MutableString("'").append(string).append("'") : string;
+    return string.indexOf(' ') > 0 ? "'"+string+"'": string;
 };
 
 NYTArticleSearchQuery.prototype.requestURL = function()
 {
-    var s = NYT_ARTICLE_SEARCH_API_BASE_URL+this.resultQuery();
+    var s = NYT_ARTICLE_SEARCH_API_BASE_URL+this.resultQuery()+this._apikey;
     return encodeURI(s);
-
 };
 
 NYTArticleSearchQuery.prototype.clear = function()
@@ -375,18 +368,17 @@ NYTArticleSearchQuery.prototype.clear = function()
     this._returnFacetesSet = false;
     this._returnFieldsSet = false;
 
-    this._queryKeywords = new MutableString();
-    this._queryExcludes = new MutableString();
-    this._queryFacets = new MutableString();
-    this._queryReturnFields = new MutableString();
-    this._queryReturnFacets = new MutableString();
+    this._queryKeywords.clear();
+    this._queryExcludes.clear();
+    this._queryFacets.clear();
+    this._queryReturnFields.clear();
+    this._queryReturnFacets.clear();
 
     this._paramBeginDate = '';
     this._paramEndDate = '';
 
     this._offset = -1;
 };
-
 
 NYTArticleSearchQuery.query = function()
 {

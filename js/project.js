@@ -22,23 +22,47 @@ function Project()
 
 Project.prototype.testNYTArticleSearch = function()
 {
+    //http://developer.nytimes.com/docs/read/article_search_api#h2-queries
+
     var query = NYTArticleSearchQuery.query();
 
     //test 1
 
-    query.searchKeywords('absantee ballot');
+    query.searchKeywords(['absantee ballot']);
+    console.log(query.resultQuery());
+    query.clear();
 
-    console.log(query.requestURL());
+    query.searchKeywords(['absantee ballot']).
+          searchKeywordsInField(['election'],FIELD_TITLE);
+    console.log(query.resultQuery());
+    query.clear();
 
-    //query.clear();
-    //query.searchKeywordsInField('absantee ballot',FIELD_TITLE);
+    query.searchKeywordsInField(['election'],FIELD_TITLE).
+          searchKeywordsInField(['turnout'],FIELD_ABSTRACT);
+    console.log(query.resultQuery());
+    query.clear();
+
+    query.searchKeywordsInField(['bailout'],FIELD_TITLE).
+          addReturnFields([RETURN_TITLE,RETURN_LEAD_PARAGRAPH,RETURN_URL,RETURN_DATE]);
+    console.log(query.resultQuery());
+    query.clear();
+
+    query.searchKeywordsInField(['bailout'],FIELD_TITLE).
+          addReturnFacetes([NYTFacet.facetWithType(FACET_ORG)]).
+          setDateBegin('20081001').
+          setDateEnd('20081201').
+          addReturnFields([FACET_ORG]);
+    console.log(query.resultQuery());
+    query.clear();
+
+    query.searchKeywords(['obama']).
+          addFacetes(NYTFacet.facetWithTypeandQuery(FACET_DES,'primaries and caucuses'));
+    console.log(query.resultQuery());
+    query.clear();
 
 
-    /*
-    articleSearchQueryRequestURL = NYTArticleSearchQuery.query().
-                                   searchKeywordsInField(["germany"],FIELD_TEXT).
-                                   requestURL();
-    */
+
+
 
 
 };
