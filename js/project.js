@@ -9,14 +9,56 @@
 
 function Project()
 {
-    //this.testMap();
-    var h = 'hy';
+
 
     this.testNYTArticleSearch();
+    this.testCrawl();
 
 
 
 }
+
+Project.prototype.testCrawl = function()
+{
+    var queryURL = NYTArticleSearchQuery.query();
+
+    queryURL.searchKeywords(['absantee']);
+
+    console.log(queryURL.requestURL());
+
+    var crawler = new NYTDataCrawler();
+
+    //crawler.setRequestList(["http://api.nytimes.com/svc/search/v1/article?query=absantee&api-key=ac4190b51fdaa3113d81a263750fcf16:6:66636531"]);
+    //crawler.crawl();
+
+    JSON.req
+
+
+
+
+    /*
+    FlyJSONP.init({debug:true});
+
+    var interval = 2000;
+    var timer = setTimeout(getJSON,interval);
+
+    function getJSON()
+    {
+        FlyJSONP.get({
+            url:'http://storify.com/xdamman.json',
+            success:function (data)
+            {
+                timer = setTimeout(getJSON,2000);
+            },
+            error:function (errorMsg)
+            {
+                clearTimeout(timer);
+            }
+        });
+
+    }*/
+
+};
 
 
 
@@ -59,12 +101,6 @@ Project.prototype.testNYTArticleSearch = function()
           addFacetes(NYTFacet.facetWithTypeandQuery(FACET_DES,'primaries and caucuses'));
     console.log(query.resultQuery());
     query.clear();
-
-
-
-
-
-
 };
 
 Project.prototype.testMap = function()

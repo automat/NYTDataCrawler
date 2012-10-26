@@ -378,6 +378,8 @@ NYTArticleSearchQuery.prototype.clear = function()
     this._paramEndDate = '';
 
     this._offset = -1;
+
+    return this;
 };
 
 NYTArticleSearchQuery.query = function()

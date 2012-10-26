@@ -19,5 +19,7 @@ document.write('<script src="js/data/nyt.facet.js" type="text/javascript"></scri
 document.write('<script src="js/data/nyt.article.search.js" type="text/javascript"></script>');
 document.write('<script src="js/data/nyt.ressource.js" type="text/javascript"></script>');
 
+document.write('<script src="js/utils/flyjsonp.min.js" type="text/javascript"></script>');
+document.write('<script src="js/data/nyt.data.crawler.js" type="text/javascript"></script>');
 
 document.write('<script src="js/project.js" type="text/javascript"></script>');
