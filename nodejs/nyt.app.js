@@ -12,6 +12,7 @@ var data       = require('./nyt.crawler.requests');
 var nytas      = require('./nyt.crawler.article');
 var NYTAnalyze = require('./nyt.analyze');
 var scopes     = require('./nyt.crawler.data');
+var testJSON   = require('../data/term_peace_germany_scope_complete.json');
 
 
 function crawl()
@@ -25,7 +26,7 @@ function crawl()
     var dateScope = scopes.SCOPES_DATE;
 
     var searchQueries = [
-        ["war"]
+        ["weapons of mass destruction"]
     ];
 
     var returnFacets = [new nytas.NYTFacet(nytas.RETURN_GEO)];
@@ -36,11 +37,11 @@ function crawl()
 
     var i = -1;
 
-    while (++i < 2)
+    while (++i < yearScope.length)
     {
         query.clear();
         requestPaths.push(query.searchKeywords(searchQueries[0])
-                               .addReturnFacetes(returnFacets)
+                               //.addReturnFacetes(returnFacets)
                                .setDateBegin(yearScope[i] + dateScope[0])
                                .setDateEnd(yearScope[i] + dateScope[1])
                                .requestPath()
@@ -51,15 +52,26 @@ function crawl()
 
     crawler = new NYTCrawler();
 
-    crawler.setInterval(1000)
+    crawler.setInterval(500)
            .setSaveFilePath('../data/')
-           .setSaveFilename('war19812012.json')
+           .setSaveFilename('term_weapons_of_mass_destruction_scope_complete.json')
            .setRequestList(crawlRequest)
            .crawl();
 }
 
+function convert()
+{
+    var s = new NYTAnalyze.NYTDataAnalyzer.TermCountMerger();
+
+   // s.mergeData(testJSON);
+
+    console.log(testJSON);
+
+}
+
 function main()
 {
+    //convert();
     crawl();
 }
 

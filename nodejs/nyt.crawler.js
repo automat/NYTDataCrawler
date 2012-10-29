@@ -30,11 +30,12 @@ var MSG_INIT             = 'Init',
     MSG_COMPLETE_PASS    = 'Pass complete!',
     MSG_FILE_WRITING     = 'Writing file ...',
     MSG_FILE_COMPLETE    = 'File saved succesfully!',
-    MSG_FILE_ERROR       = 'File',
+    MSG_FILE_ERROR       = 'Error! File not saved.',
     MSG_FINISHED         = 'Done!';
 
 function NYTCrawler()
 {
+    this.__dataRaw        = '';
     this.__outputRAW      = [];
     this.__interval       = 2000;
     this.__currentRequest = null;
@@ -46,9 +47,11 @@ function NYTCrawler()
     this.__maxRequests    = 4000;
     this.__outputFilePath = null;
     this.__outputFilename = null;
-    this.__options        = {host:NYT_API_HOST_URL,path:''};
+    this.__options        = {host:NYT_API_HOST_URL,path:'',encoding:'utf8',json:true};
     this.__doLog          = true;
 }
+
+
 
 NYTCrawler.prototype.setJSONFormat  = function()
 {
@@ -105,14 +108,14 @@ NYTCrawler.prototype.crawl = function()
 
 NYTCrawler.prototype.__onRequestGet = function(chunk)
 {
-    var str = chunk.toString();
-    this.__outputRAW.push(str);
+    this.__dataRaw += chunk;
 };
 
 NYTCrawler.prototype.__onRequestFinished = function()
 {
     this.__log('- '+MSG_COMPLETE_PASS);
-
+    this.__outputRAW.push(JSON.parse(this.__dataRaw));
+    this.__dataRaw = '';
     this.__continue();
 };
 
@@ -128,8 +131,10 @@ NYTCrawler.prototype.__onComplete = function()
 
     var t = this;
 
+
+
     fs.writeFile(this.__outputFilePath+this.__outputFilename,JSON.stringify(this.__outputRAW, null, 4),
-    function(error){if(error)t.__log(MSG_FILE_ERROR);else t.__onFileWriteComplete();});
+    function(error){if(error)t.__log(error + " " + MSG_FILE_ERROR);else t.__onFileWriteComplete();});
 };
 
 NYTCrawler.prototype.__onFileWriteComplete = function()
@@ -161,12 +166,13 @@ NYTCrawler.prototype.__getJSON = function()
     this.__options.path = this.__currentRequest;
     var t = this;
 
-    /*
+
     this.__requestHttp(this.__onRequestGet.bind(this),
                        this.__onRequestFinished.bind(this),
                        this.__onRequestError.bind(this));
-    */
 
+
+    /*
     http.get(this.__options,function(res)
     {
         res.on('data',
@@ -193,7 +199,7 @@ NYTCrawler.prototype.__getJSON = function()
             t.__onRequestError(e);
         }
     );
-
+    */
 };
 
 NYTCrawler.prototype.__requestHttp = function(callbackGet,callbackFinished,callbackError)
