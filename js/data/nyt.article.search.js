@@ -360,6 +360,12 @@ NYTArticleSearchQuery.prototype.requestURL = function()
     return encodeURI(s);
 };
 
+NYTArticleSearchQuery.prototype.requestPath = function()
+{
+    var s = NYT_ARTICLE_SEARCH_API_URL + this.resultQuery() + this._apikey;
+    return encodeURI(s);
+};
+
 NYTArticleSearchQuery.prototype.clear = function()
 {
     this._searchSet = false;

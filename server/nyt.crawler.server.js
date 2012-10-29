@@ -50,6 +50,11 @@ function NYTCrawler()
     this.__doLog          = true;
 }
 
+NYTCrawler.prototype.setJSONFormat  = function()
+{
+
+};
+
 NYTCrawler.prototype.setSaveFilePath = function(path)
 {
     this.__outputFilePath = path;
@@ -148,6 +153,11 @@ NYTCrawler.prototype.__getJSON = function()
     this.__options.path = this.__currentRequest;
     var t = this;
 
+    this.__requestHttp(this.__onRequestGet.bind(this),
+                       this.__onRequestFinished.bind(this),
+                       this.__onRequestError.bind(this));
+
+    /*
     http.get(this.__options,function(res)
     {
         res.on('data',
@@ -169,12 +179,28 @@ NYTCrawler.prototype.__getJSON = function()
             }
         );
     }).on('error',
-
         function(e)
         {
             t.__onRequestError(e);
         }
     );
+    */
+};
+
+NYTCrawler.prototype.__requestHttp = function(callbackGet,callbackFinished,callbackError)
+{
+    http.get(this.__options,function(res)
+       {
+           res.on('data',function(chunk){callbackGet(chunk);});
+           res.on('end', function(){if(res.statusCode == 200){callbackFinished();}});
+       }).on('error',function(e){callbackError(e);});
+};
+
+NYTCrawler.prototype.testRequest = function(request)
+{
+    this.__options.path = request;
+    var o = '';
+    this.__requestHttp(function(chunk){o+=chunk},function(){console.log(o)},null);
 };
 
 NYTCrawler.prototype.reset = function()

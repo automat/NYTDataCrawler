@@ -8,7 +8,7 @@
 //
 
 var NYT_ARTICLE_SEARCH_API_BASE_URL = "http://api.nytimes.com/svc/search/v1/article?";
-
+var NYT_ARTICLE_SEARCH_API_URL      = "/svc/search/v1/article?";
 // abstract
 //
 // A summary of the article, written by Times indexers.

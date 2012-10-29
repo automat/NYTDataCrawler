@@ -11,52 +11,57 @@ function Project()
 {
 
 
-    this.testNYTArticleSearch();
-    this.testCrawl();
+    //this.testNYTArticleSearch();
+    this.buildCrawlRequestList();
 
 
 
 }
 
-Project.prototype.testCrawl = function()
+Project.prototype.buildCrawlRequestList = function()
 {
-    var queryURL = NYTArticleSearchQuery.query();
+    var yearScope = ['1981','1982','1983','1984','1985','1986','1987','1988','1989','1990',
+                     '1991','1992','1993','1994','1995','1996','1997','1998','1999','2000',
+                     '2001','2002','2003','2004','2005','2006','2007','2008','2009','2010',
+                     '2011','2012'];
 
-    queryURL.searchKeywords(['absantee']);
+    var dateScope = ['0101','1231'];
 
-    console.log(queryURL.requestURL());
+    var searchQueries = [["war"]];
 
-    var crawler = new NYTDataCrawler();
+    var returnFacets  = [new NYTFacet(RETURN_GEO)];
 
-    //crawler.setRequestList(["http://api.nytimes.com/svc/search/v1/article?query=absantee&api-key=ac4190b51fdaa3113d81a263750fcf16:6:66636531"]);
-    //crawler.crawl();
+    var query  = NYTArticleSearchQuery.query();
 
-    JSON.req
+    var requestPaths = [];
+
+    query.searchKeywords(searchQueries[0]).
+          addReturnFacetes(returnFacets).
+          setDateBegin(yearScope[0]+dateScope[0]).
+          setDateEnd(yearScope[0]+dateScope[1]);
 
 
+    var i = -1;
 
-
-    /*
-    FlyJSONP.init({debug:true});
-
-    var interval = 2000;
-    var timer = setTimeout(getJSON,interval);
-
-    function getJSON()
+    while(++i < yearScope.length)
     {
-        FlyJSONP.get({
-            url:'http://storify.com/xdamman.json',
-            success:function (data)
-            {
-                timer = setTimeout(getJSON,2000);
-            },
-            error:function (errorMsg)
-            {
-                clearTimeout(timer);
-            }
-        });
+        query.clear();
+        requestPaths.push("'"+query.searchKeywords(searchQueries[0]).
+                                    addReturnFacetes(returnFacets).
+                                    setDateBegin(yearScope[i]+dateScope[0]).
+                                    setDateEnd(yearScope[i]+dateScope[1]).
+                                    requestPath().toString() + "'");
+    }
 
-    }*/
+
+
+    console.log(requestPaths);
+
+
+
+
+
+
 
 };
 
