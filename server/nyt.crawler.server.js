@@ -8,47 +8,153 @@
 //
 
 var http     = require('http'),
-    https    = require('https');
+    https    = require('https'),
+    fs       = require('fs');
+
+var NYT_API_HOST_URL = 'api.nytimes.com';
+
+var MSG_INIT             = 'Init',
+    MSG_FILE_PATH_SET    = 'File path set',
+    MSG_FILE_PATH        = '- filepath=',
+    MSG_FILE_NAME_SET    = 'File name set',
+    MSG_FILE_NAME        = '- filename=',
+    MSG_REQUEST_LIST_SET = 'Request list set',
+    MSG_REQUEST_LIST     = '- requests=',
+    MSG_INTERVAL_SET     = 'Interval set',
+    MSG_INTERVAL         = '- interval=',
+    MSG_BEGIN_CRAWL      = 'Start crawling ...',
+    MSG_COMPLETE_CRAWL   = 'Crawl complete!',
+    MSG_CURRENT_PASS     = 'currentPass=',
+    MSG_CURRENT_REQUEST  = 'currentRequest=',
+    MSG_BEGIN_PASS       = 'Start pass ...',
+    MSG_COMPLETE_PASS    = 'Pass complete!',
+    MSG_FILE_WRITING     = 'Writing file ...',
+    MSG_FILE_COMPLETE    = 'File saved succesfully!',
+    MSG_FILE_ERROR       = 'File',
+    MSG_FINISHED         = 'Done!';
 
 function NYTCrawler()
 {
-    this.__interval    = 2000;
-    this.__requestList = null;
-    this.__currentPass = -1;
-    this.__maxPass     = -1;
-    this.__timeout     = null;
-    this.__callback    = null;
+    this.__outputRAW      = {results:[]};
+    this.__interval       = 2000;
+    this.__currentRequest = null;
+    this.__requestList    = null;
+    this.__currentPass    = -1;
+    this.__maxPass        = -1;
+    this.__timeout        = null;
+    this.__callback       = null;
+    this.__maxRequests    = 4000;
+    this.__outputFilePath = null;
+    this.__outputFilename = null;
+    this.__options        = {host:NYT_API_HOST_URL,path:''};
+    this.__doLog          = true;
 }
 
-NYTCrawler.prototype.reset = function()
+NYTCrawler.prototype.setSaveFilePath = function(path)
 {
-    this.__interval    = 2000;
-    this.__requestList = null;
-    this.__currentPass = -1;
-    this.__maxPass     = -1;
-    this.__timeout     = null;
-    this.__callback    = null;
+    this.__outputFilePath = path;
+
+    this.__log(MSG_FILE_PATH_SET);
+    this.__log(MSG_FILE_PATH+this.__outputFilePath);
+};
+
+NYTCrawler.prototype.setSaveFilename = function(name)
+{
+    this.__outputFilename = name;
+
+    this.__log(MSG_FILE_NAME_SET);
+    this.__log(MSG_FILE_NAME+this.__outputFilename);
+};
+
+NYTCrawler.prototype.setRequestList = function(list)
+{
+    this.__requestList = list;
+    this.__maxPass     = this.__requestList.length;
+
+    this.__log(MSG_REQUEST_LIST_SET);
+    this.__log(MSG_REQUEST_LIST + this.__requestList);
+};
+
+NYTCrawler.prototype.setInterval = function(interval)
+{
+    this.__interval = interval;
+
+    this.__log(MSG_INTERVAL_SET);
+    this.__log(MSG_INTERVAL + this.__interval);
 };
 
 NYTCrawler.prototype.crawl = function()
 {
+    this.__log(MSG_BEGIN_CRAWL);
 
+    this.__continue();
 };
 
-NYTCrawler.prototype.getJSON = function(callback)
+NYTCrawler.prototype.__onRequestGet = function(chunk)
 {
-    var options = {host:'api.nytimes.com',path:'/svc/search/v1/article?format=json&api-key=ac4190b51fdaa3113d81a263750fcf16:6:66636531'};
-    console.log(options.host+options.path);
+    var str = chunk.toString();
+    this.__outputRAW.results.push(str);
+};
 
-    http.get(options,function(res)
+NYTCrawler.prototype.__onRequestFinished = function()
+{
+    this.__log('- '+MSG_COMPLETE_PASS);
+
+    this.__continue();
+};
+
+NYTCrawler.prototype.__onRequestError = function(error)
+{
+    console.log(error);
+};
+
+NYTCrawler.prototype.__onComplete = function()
+{
+    this.__log(MSG_COMPLETE_CRAWL);
+    this.__log(MSG_FILE_WRITING);
+
+    var t = this;
+
+    fs.writeFile(this.__outputFilePath+this.__outputFilename,JSON.stringify(this.__outputRAW, null, 4),
+    function(error){if(error)t.__log(MSG_FILE_ERROR);else t.__onFileWriteComplete();});
+};
+
+NYTCrawler.prototype.__onFileWriteComplete = function()
+{
+    this.__log(MSG_FILE_COMPLETE);
+    this.__log(MSG_FINISHED);
+};
+
+
+NYTCrawler.prototype.__continue = function()
+{
+    if(this.__currentPass == this.__maxPass-1)
     {
-        var json = "";
+        this.__onComplete();
+        return;
+    }
 
+    this.__currentPass++;
+    this.__currentRequest = this.__requestList[this.__currentPass];
+    this.__timeout = setTimeout(this.__getJSON.bind(this), this.__interval);
+};
+
+NYTCrawler.prototype.__getJSON = function()
+{
+    this.__log('- '+MSG_BEGIN_PASS);
+    this.__log('-- '+MSG_CURRENT_PASS+this.__currentPass);
+    this.__log('-- '+MSG_CURRENT_REQUEST+this.__currentRequest);
+
+    this.__options.path = this.__currentRequest;
+    var t = this;
+
+    http.get(this.__options,function(res)
+    {
         res.on('data',
 
             function(chunk)
             {
-                json += chunk;
+                t.__onRequestGet(chunk);
             }
         );
 
@@ -58,7 +164,7 @@ NYTCrawler.prototype.getJSON = function(callback)
             {
                 if(res.statusCode == 200)
                 {
-                    console.log(json);
+                    t.__onRequestFinished();
                 }
             }
         );
@@ -66,14 +172,39 @@ NYTCrawler.prototype.getJSON = function(callback)
 
         function(e)
         {
-            console.log('error: ' + e);
+            t.__onRequestError(e);
         }
-
     );
 };
 
-var crawler = new NYTCrawler();
-crawler.getJSON(null);
+NYTCrawler.prototype.reset = function()
+{
+    this.__outputRAW   = '';
+        this.__interval    = 2000;
+        this.__requestList = null;
+        this.__currentPass = -1;
+        this.__maxPass     = -1;
+        this.__timeout     = null;
+        this.__callback    = null;
+        this.__maxRequests = 4000;
+};
+
+NYTCrawler.prototype.description = function()
+{
+    return "requestList="+this.__requestList+" output="+this.__outputFilePath+this.__outputFilename;
+};
+
+NYTCrawler.prototype.__log = function(msg)
+{
+    if(this.__doLog == true)
+    {
+        console.log("NYTCrawler: " + msg);
+    }
+};
+
+module.exports = NYTCrawler;
+
+
 
 
 
