@@ -18,4 +18,4 @@ NYTAnalyze.prototype.setData = function(data)
     this._data = data;
 };
 
-module.exports = NYTAnalyze;
+exports = NYTAnalyze;

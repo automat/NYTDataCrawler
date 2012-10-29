@@ -35,7 +35,7 @@ var MSG_INIT             = 'Init',
 
 function NYTCrawler()
 {
-    this.__outputRAW      = {results:[]};
+    this.__outputRAW      = [];
     this.__interval       = 2000;
     this.__currentRequest = null;
     this.__requestList    = null;
@@ -61,6 +61,8 @@ NYTCrawler.prototype.setSaveFilePath = function(path)
 
     this.__log(MSG_FILE_PATH_SET);
     this.__log(MSG_FILE_PATH+this.__outputFilePath);
+
+    return this;
 };
 
 NYTCrawler.prototype.setSaveFilename = function(name)
@@ -69,6 +71,8 @@ NYTCrawler.prototype.setSaveFilename = function(name)
 
     this.__log(MSG_FILE_NAME_SET);
     this.__log(MSG_FILE_NAME+this.__outputFilename);
+
+    return this;
 };
 
 NYTCrawler.prototype.setRequestList = function(list)
@@ -78,6 +82,8 @@ NYTCrawler.prototype.setRequestList = function(list)
 
     this.__log(MSG_REQUEST_LIST_SET);
     this.__log(MSG_REQUEST_LIST + this.__requestList);
+
+    return this;
 };
 
 NYTCrawler.prototype.setInterval = function(interval)
@@ -86,6 +92,8 @@ NYTCrawler.prototype.setInterval = function(interval)
 
     this.__log(MSG_INTERVAL_SET);
     this.__log(MSG_INTERVAL + this.__interval);
+
+    return this;
 };
 
 NYTCrawler.prototype.crawl = function()
@@ -98,7 +106,7 @@ NYTCrawler.prototype.crawl = function()
 NYTCrawler.prototype.__onRequestGet = function(chunk)
 {
     var str = chunk.toString();
-    this.__outputRAW.results.push(str);
+    this.__outputRAW.push(str);
 };
 
 NYTCrawler.prototype.__onRequestFinished = function()
@@ -153,11 +161,12 @@ NYTCrawler.prototype.__getJSON = function()
     this.__options.path = this.__currentRequest;
     var t = this;
 
+    /*
     this.__requestHttp(this.__onRequestGet.bind(this),
                        this.__onRequestFinished.bind(this),
                        this.__onRequestError.bind(this));
+    */
 
-    /*
     http.get(this.__options,function(res)
     {
         res.on('data',
@@ -184,7 +193,7 @@ NYTCrawler.prototype.__getJSON = function()
             t.__onRequestError(e);
         }
     );
-    */
+
 };
 
 NYTCrawler.prototype.__requestHttp = function(callbackGet,callbackFinished,callbackError)
@@ -213,6 +222,8 @@ NYTCrawler.prototype.reset = function()
         this.__timeout     = null;
         this.__callback    = null;
         this.__maxRequests = 4000;
+
+    return this;
 };
 
 NYTCrawler.prototype.description = function()
