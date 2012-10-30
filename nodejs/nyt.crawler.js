@@ -9,7 +9,9 @@
 
 var http     = require('http'),
     https    = require('https'),
-    fs       = require('fs');
+    fs       = require('fs'),
+    nytas    = require('./nyt.crawler.article'),
+    scopes   = require('./nyt.crawler.data');
 
 var NYT_API_HOST_URL = 'api.nytimes.com';
 
@@ -36,7 +38,7 @@ var MSG_INIT             = 'Init',
 function NYTCrawler()
 {
     this.__dataRaw        = '';
-    this.__outputRAW      = {results:[]};
+    this.__outputRAW      = {tokens:[],results:[]};
     this.__interval       = 2000;
     this.__currentRequest = null;
     this.__requestList    = null;

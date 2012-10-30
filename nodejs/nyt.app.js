@@ -80,7 +80,7 @@ function convert()
 
 
 
-    console.log(results);
+    //console.log(results);
 
    // var s = new NYTAnalyze.NYTDataAnalyzer.TermCountMerger();
 

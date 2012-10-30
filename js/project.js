@@ -9,15 +9,16 @@
 
 function Project()
 {
-
-
     //this.testNYTArticleSearch();
     //this.buildCrawlRequestList();
-     dthis.buildCrawlRequestList();
-
-
-
+    this.testPlot();
 }
+
+Project.prototype.testPlot = function()
+{
+    var plotter = new NYTTestPlot('canvasContainer');
+    plotter.plot();
+};
 
 Project.prototype.buildCrawlRequestList = function()
 {
