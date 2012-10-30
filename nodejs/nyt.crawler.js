@@ -36,7 +36,7 @@ var MSG_INIT             = 'Init',
 function NYTCrawler()
 {
     this.__dataRaw        = '';
-    this.__outputRAW      = [];
+    this.__outputRAW      = {results:[]};
     this.__interval       = 2000;
     this.__currentRequest = null;
     this.__requestList    = null;
@@ -114,7 +114,7 @@ NYTCrawler.prototype.__onRequestGet = function(chunk)
 NYTCrawler.prototype.__onRequestFinished = function()
 {
     this.__log('- '+MSG_COMPLETE_PASS);
-    this.__outputRAW.push(JSON.parse(this.__dataRaw));
+    this.__outputRAW.results.push(JSON.parse(this.__dataRaw));
     this.__dataRaw = '';
     this.__continue();
 };
@@ -133,7 +133,7 @@ NYTCrawler.prototype.__onComplete = function()
 
 
 
-    fs.writeFile(this.__outputFilePath+this.__outputFilename,JSON.stringify(this.__outputRAW, null, 4),
+    fs.writeFile(this.__outputFilePath+this.__outputFilename,JSON.stringify(this.__outputRAW),
     function(error){if(error)t.__log(error + " " + MSG_FILE_ERROR);else t.__onFileWriteComplete();});
 };
 

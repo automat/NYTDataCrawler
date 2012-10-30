@@ -7,12 +7,13 @@
 //
 //
 
-var NYTCrawler = require('./nyt.crawler');
-var data       = require('./nyt.crawler.requests');
-var nytas      = require('./nyt.crawler.article');
-var NYTAnalyze = require('./nyt.analyze');
-var scopes     = require('./nyt.crawler.data');
-var testJSON   = require('../data/term_peace_germany_scope_complete.json');
+var NYTCrawler    = require('./nyt.crawler');
+var data          = require('./nyt.crawler.requests');
+var nytas         = require('./nyt.crawler.article');
+var NYTAnalyze    = require('./nyt.analyze');
+var scopes        = require('./nyt.crawler.data');
+
+//var testJSON   = require('../data/term_terrorist_scope_complete.json');
 
 
 function crawl()
@@ -26,7 +27,7 @@ function crawl()
     var dateScope = scopes.SCOPES_DATE;
 
     var searchQueries = [
-        ["weapons of mass destruction"]
+        ["terrorist"]
     ];
 
     var returnFacets = [new nytas.NYTFacet(nytas.RETURN_GEO)];
@@ -54,25 +55,51 @@ function crawl()
 
     crawler.setInterval(500)
            .setSaveFilePath('../data/')
-           .setSaveFilename('term_weapons_of_mass_destruction_scope_complete.json')
+           .setSaveFilename('term_terrorist_scope_complete.json')
            .setRequestList(crawlRequest)
            .crawl();
 }
 
 function convert()
 {
-    var s = new NYTAnalyze.NYTDataAnalyzer.TermCountMerger();
+    /*
+    var l = new loader.NYTJSONLoader();
+    var m = new loader.NYTJSONMerger();
+
+    var dataDirectory = '../data/';
+
+    var fileName = 'term_terrorist_scope_complete.json';
+
+
+    l.setDirectory(dataDirectory);
+    var results = l.setFileName(fileName).load();
+
+    m.setInputDirectory(dataDirectory);
+    m.setInputFilename(fileName);
+    */
+
+
+
+    console.log(results);
+
+   // var s = new NYTAnalyze.NYTDataAnalyzer.TermCountMerger();
+
+
+
+    //loader.load('../data/term_terrorist_scope_complete.json');
+
+
 
    // s.mergeData(testJSON);
 
-    console.log(testJSON);
+    //console.log(testJSON);
 
 }
 
 function main()
 {
-    //convert();
-    crawl();
+    convert();
+   //crawl();
 }
 
 

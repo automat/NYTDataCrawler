@@ -12,7 +12,8 @@ function Project()
 
 
     //this.testNYTArticleSearch();
-    this.buildCrawlRequestList();
+    //this.buildCrawlRequestList();
+     dthis.buildCrawlRequestList();
 
 
 

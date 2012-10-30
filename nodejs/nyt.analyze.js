@@ -10,6 +10,9 @@
 
 var NYTDataAnalyzer = {};
 
+
+
+
 function TermCountMerger()
 {
     this._data = null;
