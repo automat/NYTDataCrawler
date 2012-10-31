@@ -130,9 +130,86 @@
 
     </script>
     <style type="text/css">
+        * {
+            margin: 0;
+            padding: 0px;
+            background-color: rgb(213, 217, 222)
+ }
+
+        .container {
+            padding: 30px;
+        }
+
+        .wrapper {
+            position: relative;
+
+            float: left;
+            left: 0px;
+            width: 100%;
+
+        }
+
+        .left1 {
+            position: relative;
+            float: left;
+            left: 0px;
+            width: 33.3%;
+            height: 400px;
+
+        }
+
+        .left2 {
+            position: relative;
+            float: left;
+            left: 0px;
+            width: 33.3%;
+            height: 400px;
+
+        }
+
+        .left3 {
+            position: relative;
+            float: left;
+            left: 0px;
+            width: 33.3%;
+            height: 400px;
+
+        }
+
+        .full {
+                    position: relative;
+                    float: left;
+                    left: 0px;
+                    width: 50%;
+                    height: 400px;
+
+                }
+
+
+
     </style>
 </head>
 <body onload="init();">
 <div id='canvasContainer'></div>
+<div class="container">
+    <div class="wrapper">
+        <div id='g00' class="left1">
+        </div>
+        <div id='g01' class="left2">
+        </div>
+        <div id='g02' class="left3">
+        </div>
+        <div id='g10' class="left1">
+        </div>
+        <div id='g11' class="left2">
+        </div>
+        <div id='g12' class="left3">
+        </div>
+        <div id='g20' class="full">
+        </div>
+        <div id='g30' class="full">
+                </div>
+    </div>
+</div>
 </body>
 </html>

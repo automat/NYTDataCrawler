@@ -74,7 +74,7 @@ function Project()
 
 Project.prototype.testPlot = function()
 {
-    var plotter = new NYTTestPlot('canvasContainer');
+    var plotter = new NYTTestPlot();
 };
 
 Project.prototype.buildCrawlRequestList = function()

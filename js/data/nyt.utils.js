@@ -47,6 +47,16 @@ NYTUtils.roundThousand = function(value)
    return Math.round(value/1000)*1000;
 };
 
+NYTUtils.interpolate = function(start,end,factor)
+{
+    return start + (end-start) * factor;
+};
+
+NYTUtils.map = function(value,istart,istop,ostart,ostop)
+{
+    return ostart + (ostop - ostart) * ((value - istart) / (istop - istart));
+};
+
 
 
 function MutableString()
