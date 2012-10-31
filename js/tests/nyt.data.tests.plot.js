@@ -12,64 +12,95 @@
 
 function NYTTestPlot(id)
 {
-    this.canvas = new Canvas(id);
-    this.ctx    = this.canvas.getContext();
-
-    this.canvas.setSize(window.innerWidth,window.innerHeight);
-
-    this.mergedTermTerrorist = this.mergeData(term_terrorist_scope_complete,'terrorist');
+    this.graph = new NYTGraph(id,window.innerWidth,window.innerHeight);
+    this.graph.setData(this.mergeData(term_terrorist_scope_complete,'terrorist'));
+    this.graph.render();
 
     window.addEventListener('resize',this.onResize.bind(this));
+}
 
-    /*
-    this.parent = document.getElementById(id);
-    this.canvas = document.createElement('canvas');
-    this.parent.appendChild(this.canvas);
-    this.ctx = this.canvas.getContext('2d');
 
-    this.mergedTermTerrorist = this.mergeData(term_terrorist_scope_complete,'terrorist');
-    */
+function NYTGraph(parentDomElementId,width,height)
+{
+    this.canvas = new Canvas(parentDomElementId);
+    this.ctx    = this.canvas.getContext();
+    this.canvas.setSize(width,height);
+
+    this._data   = null;
+
+    this._margins = {canvas:   {top:30,right:30,bottom:30,left:30},
+                     container:{top:30,right:40,bottom:40,left:50},
+                     label:    {top:30,left:60},
+                     graph:    {top:0,right:0,bottom:0,left:0}};
+
+    this._sizes   = {canvas:   {width:0,height:0},
+                     container:{width:0,height:0},
+                     inner:    {width:0,height:0},
+                     graph:    {width:0,height:0}};
+
+    this._properties = {axis:{X:{},Y:{}}};
+
+    this.axisXProperty   = {showStartEnd:true,
+                            frequenceTick:2,
+                            frequenceLabel:4,
+                            width:1,
+                            color:0,
+                            mainTick:{size:5,width:2},
+                            subTick: {size:0,width:1}};
+
+    this.axisYProperty    = {showStartEnd:true,
+                            frequenceTick:2,
+                            frequenceLabel:4,
+                            width:1,
+                            color:0,
+                            mainTick:{size:5,width:2},
+                            subTick: {size:0,width:1}};
 
 }
 
-NYTTestPlot.prototype.onResize = function(e)
-{
-    this.canvas.setSize(window.innerWidth,window.innerHeight);
-    this.plot();
 
+NYTGraph.prototype.setData = function(data)
+{
+    this._data = data;
 };
 
-NYTTestPlot.prototype.plot = function()
+NYTGraph.prototype.render = function()
 {
+    if(!this._data)return;
+
+    this._updateSizes();
+
     var c = this.canvas;
 
     var width,height;
 
-    var marginCanvas  = {top:30,right:30,bottom:30,left:30};
-    var sizeContainer = {width:  Math.round(c.width- marginCanvas.left-marginCanvas.right),
-                         height: Math.round(c.height-marginCanvas.top-marginCanvas.bottom)};
+    var marginCanvas  = this._margins.canvas;
+    var sizeContainer = this._sizes.container;
 
-    var marginContainer    = {top:30,right:40,bottom:40,left:50};
+    var marginContainer    = this._margins.container;
 
-    var marginLabel = {top:40,left:40};
+    var marginLabel = this._margins.label;
 
-    var sizeContainerInner = {width:  Math.round(sizeContainer.width - marginContainer.left - marginContainer.right),
-                              height: Math.round(sizeContainer.height - marginContainer.top - marginContainer.bottom)};
+    var axisXProperty = this.axisXProperty;
 
-    var marginGraph = {top:0,right:0,bottom:0,left:0};
-    var sizeGraph   = {width: Math.round(sizeContainerInner.width - marginGraph.left - marginGraph.right),
-                       height:Math.round(sizeContainerInner.height - marginGraph.top - marginGraph.bottom)};
+    var axisYProperty = this.axisYProperty;
 
-    var sizePlotIndicator = 5;
+    var dataResolution = 5;
+
+    var sizeContainerInner = this._sizes.inner;
+
+    var marginGraph = this._margins.graph;
+    var sizeGraph   = this._sizes.graph;
 
 
-    var data    = this.mergedTermTerrorist;
+
+
+    var data    = this._data;
     var dataLen = data.results.length;
     var plotPoints = [];
     var plotSegWidth =  sizeGraph.width / (dataLen - 1) ;
 
-    var p0 = {x:0,y:0},
-        p1 = {x:0,y:0};
+    var p = {x:0,y:0};
 
     var i;
 
@@ -104,7 +135,7 @@ NYTTestPlot.prototype.plot = function()
             c.translate(marginContainer.left, marginContainer.top);
             c.setStroke('#BAC2C9');
             c.setFill('#BAC2C9');
-            c.line(0,height,width,height);
+
 
             // BEGIN - Graph
 
@@ -114,6 +145,7 @@ NYTTestPlot.prototype.plot = function()
                 height = sizeGraph.height;
 
                 c.translate(marginGraph.left,marginGraph.top);
+                c.line(0,height,width,height);
 
                 i = -1;
 
@@ -121,18 +153,50 @@ NYTTestPlot.prototype.plot = function()
 
                 while (++i < dataLen)
                 {
-                    p0.x = i * plotSegWidth;
-                    p0.y = height;
-                    p1.x = p0.x;
-                    p1.y = p0.y + sizePlotIndicator;
+                    p.x = i * plotSegWidth;
+                    p.y = height;
 
-                    c.line(p0.x, p0.y, p1.x, p1.y);
+                    plotPoints.push(this._projectValue(i, plotSegWidth, height, data.results[i].total, data.max.total));
 
-                    plotPoints.push(this.projectValue(i, plotSegWidth, height, data.results[i].total, data.max.total));
+                    if(i%axisXProperty.frequenceTick==0 || (i == dataLen-1 && axisXProperty.showStartEnd))
+                    {
+                        this._drawAxisXTick(axisXProperty.mainTick,p);
+                    }
+                    else
+                    {
+                        this._drawAxisXTick(axisXProperty.subTick, p);
+                    }
 
-                    if(i%4==0)c.text(NYTDataScope.YEAR[i], p1.x, p1.y + 15);
+                    if (i % axisXProperty.frequenceLabel == 0 || (i == dataLen-1 && axisXProperty.showStartEnd))
+                    {
+                        c.text(NYTDataScope.YEAR[i], p.x, p.y + axisXProperty.mainTick.size + 15);
+                    }
+
 
                 }
+
+                c.line(0,0,0,height);
+
+                i = -1;
+
+                var dataStep = Math.round(height / dataResolution);
+                var dataC    = Math.round(data.max.total / dataResolution);
+
+                c.setTextBaseLine(Canvas.TEXT_BASELINE_MIDDLE);
+                c.setTextAlign(Canvas.TEXT_ALIGN_RIGHT);
+
+
+
+                while(++i < dataResolution + 1)
+                {
+                    p.x = 0;
+                    p.y = height - i * dataStep;
+
+                    c.line(p.x, p.y, p.x-5, p.y);
+                    c.text(NYTUtils.roundHundred(dataC * i), p.x - 10, p.y+2);
+                }
+
+
 
                 c.lineArray(plotPoints);
 
@@ -150,7 +214,7 @@ NYTTestPlot.prototype.plot = function()
         // Begin - Label
         c.push();
         {
-            c.translate(marginLabel.top,marginLabel.left);
+            c.translate(marginLabel.left,marginLabel.top);
 
             c.setTextBaseLine(Canvas.TEXT_BASELINE_TOP);
             c.setTextAlign(Canvas.TEXT_ALIGN_LEFT);
@@ -169,119 +233,50 @@ NYTTestPlot.prototype.plot = function()
     c.pop();
 
     // End - Canvas
+};
 
+NYTGraph.prototype._updateSizes = function()
+{
+    var margins = this._margins;
+    var sizes   = this._sizes;
 
+    sizes.canvas.width  = this.canvas.width;
+    sizes.canvas.height = this.canvas.height;
 
+    sizes.container.width  = Math.round(sizes.canvas.width  - margins.canvas.left - margins.canvas.right);
+    sizes.container.height = Math.round(sizes.canvas.height - margins.canvas.top  - margins.canvas.bottom);
+
+    sizes.inner.width  = Math.round(sizes.container.width  - margins.container.left - margins.container.right);
+    sizes.inner.height = Math.round(sizes.container.height - margins.container.top  - margins.container.bottom);
+
+    sizes.graph.width  = Math.round(sizes.inner.width  - margins.graph.left - margins.graph.right);
+    sizes.graph.height = Math.round(sizes.inner.height - margins.graph.top  - margins.graph.bottom);
 
 };
 
-NYTTestPlot.prototype.projectValue = function (index, segWidth, segMaxHeight, value, maxValue)
+NYTGraph.prototype._projectValue = function (index, segWidth, segMaxHeight, value, maxValue)
 {
     return [index * segWidth,segMaxHeight- segMaxHeight * value / maxValue];
 };
 
-
-/*
-NYTTestPlot.prototype.plot = function()
+NYTGraph.prototype._drawAxisXTick = function(axisProperty,p)
 {
-
-
     var c = this.canvas;
 
-    var padding = 30;
-
-    var width  = c.width  - padding ;
-    var height = c.height - padding ;
-
-    var paddingBottomDate = 5;
-    var paddingBottomTime = 30;
-
-    var data = this.mergedTermTerrorist;
-
-    var paddingChartHorizontal = 15;
-    var paddingChartTop    = 30;
-    var paddingChartBottom = 15;
-
-    var chartWidth = (-padding + width) - paddingChartHorizontal*2 ;
-    var chartHeight;
-
-    var segLength = data.results.length;
-    var segWidth  = chartWidth / (segLength - 1);
-
-    var x,y;
-    x = y = padding;
-    c.push();
-    c.translate(Canvas.POINT_HALF_FLOAT);
-    c.line({x:x,y:height-paddingBottomDate},{x:width,y:height-paddingBottomDate},'rgb(0,0,0)');
-    c.line({x:x,y:padding+paddingChartTop},{x:x,y:height-paddingBottomDate},'rgb(0,0,0)');
-    c.setTextBaseLine(Canvas.TEXT_BASELINE_TOP);
-    c.setTextAlign(Canvas.TEXT_ALIGN_CENTER);
-    c.setStrokeStyle('rgb(150,150,150)');
-    c.setFillStyle('rgb(150,150,150)');
-    var i = -1;
-
-    var points = [];
-
-
-    x+=paddingChartHorizontal;
-
-    var maxBarHeight = height - padding - paddingChartTop;
-
-    var chartVBase = height - paddingChartBottom;
-
-    function projectValue(index,value,maxValue)
-    {
-        return {x:x+index*segWidth,y:chartVBase - maxBarHeight * value / maxValue};
-    }
-
-    points.push({x:x,y:chartVBase});
-
-    while(++i < segLength)
-    {
-        var p1 = {x:x + i*segWidth,y:height-paddingBottomDate};
-        var p2 = {x:x + i*segWidth,y:height};
-
-        c.line(p1,p2);
-
-        var str = i.toString();
-
-        //points.push({x:x+ i*segWidth,y: chartVBase - maxBarHeight * data.results[i].total/data.max.total});
-
-        points.push(projectValue(i,data.results[i].total,data.max.total));
-       // console.log(data.results[i].total/data.total);
-
-
-        p1.y+=15;
-
-
-        c.text(NYTDataScope.YEAR[i],p1);
-    }
-
-    points.push({x:x+ (segLength-1)*segWidth,y:chartVBase});
-
-    function plotPoint(p,value)
-    {
-        c.circle(p,30);
-        c.text(value,{x:p.x + 40, y:p.y});
-    }
-
-
-
-
-    //
-    c.lineArray(points);
-    c.setStrokeStyle('rgb(50,50,50)');
-    c.stroke();
-
-
-    c.pop();
-
-    //ctx.fillStyle = "rgba(0,0,0,1)"; // shave off 70% opacity off the whole scene
-    //ctx.fillRect(0,0,100,120);
-
-
+    c.line(p.x, p.y, p.x, p.y + axisProperty.size);
 };
-*/
+
+NYTGraph.prototype.setSize = function(width,height)
+{
+    this.canvas.setSize(width,height);
+};
+
+NYTTestPlot.prototype.onResize = function(e)
+{
+    this.graph.setSize(window.innerWidth,window.innerHeight);
+    this.graph.render();
+};
+
 
 NYTTestPlot.prototype.mergeData = function(data,tokens)
 {

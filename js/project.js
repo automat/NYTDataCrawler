@@ -12,12 +12,69 @@ function Project()
     //this.testNYTArticleSearch();
     //this.buildCrawlRequestList();
     this.testPlot();
+/*
+    var daysPerMonthNormal = [31,28,31,30,31,30,31,31,30,31,30,31];
+    var daysPerMonthLeap = [31,29,31,30,31,30,31,31,30,31,30,31];
+
+    var leapYears = [1984,1988,1992,1996,2000,2004,2008,2012];
+
+    function isLeapYear(year)
+    {
+        var li = -1;
+        while(++li < leapYears.length)
+        {
+            if(year == leapYears[i])
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+    var YEAR_COMPLETE = [];
+    var i = -1;
+    var j;
+    var k;
+    while(++i < NYTDataScope.YEAR.length)
+    {
+        j = -1;
+        YEAR_COMPLETE.push([]);
+
+        if(isLeapYear(NYTDataScope.YEAR[i]))
+        {
+            while(j++ < daysPerMonthLeap.length)
+            {
+                k = -1;
+                YEAR_COMPLETE[i].push([]);
+                while(++k < daysPerMonthLeap[j])
+                {
+                    YEAR_COMPLETE[i][j].push(k+1);
+                }
+
+
+            }
+        }
+        else
+        {
+            while(j++ < daysPerMonthNormal.length)
+            {
+                k = -1;
+                YEAR_COMPLETE[i].push([]);
+                while (++k < daysPerMonthNormal[j])
+                {
+                    YEAR_COMPLETE[i][j].push(k+1);
+                }
+            }
+        }
+    }
+
+    console.log(YEAR_COMPLETE[0].length);
+    */
 }
 
 Project.prototype.testPlot = function()
 {
     var plotter = new NYTTestPlot('canvasContainer');
-    plotter.plot();
 };
 
 Project.prototype.buildCrawlRequestList = function()

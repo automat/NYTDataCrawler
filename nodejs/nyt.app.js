@@ -27,7 +27,7 @@ function crawl()
     var dateScope = scopes.SCOPES_DATE;
 
     var searchQueries = [
-        ["terrorist"]
+        ["peace"]
     ];
 
     var returnFacets = [new nytas.NYTFacet(nytas.RETURN_GEO)];
@@ -55,7 +55,7 @@ function crawl()
 
     crawler.setInterval(500)
            .setSaveFilePath('../data/')
-           .setSaveFilename('term_terrorist_scope_complete.json')
+           .setSaveFilename('term_peace_scope_complete.json')
            .setRequestList(crawlRequest)
            .crawl();
 }
@@ -98,8 +98,8 @@ function convert()
 
 function main()
 {
-    convert();
-   //crawl();
+    //convert();
+   crawl();
 }
 
 

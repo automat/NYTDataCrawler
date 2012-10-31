@@ -32,6 +32,23 @@ NYTUtils.logArgs = function(args)
     console.log.apply(console,args);
 };
 
+NYTUtils.roundTen = function(value)
+{
+   return Math.round(value/10)*10;
+};
+
+NYTUtils.roundHundred = function(value)
+{
+   return Math.round(value/100)*100;
+};
+
+NYTUtils.roundThousand = function(value)
+{
+   return Math.round(value/1000)*1000;
+};
+
+
+
 function MutableString()
 {
     this.__text = arguments.length > 0 ? arguments[0] : "";
