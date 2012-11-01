@@ -22,6 +22,7 @@ document.write('<script src="js/data/nyt.data.scopes.js"type="text/javascript"><
 
 document.write('<script src="js/tests/nyt.data.tests.utils.js" type="text/javascript"></script> ');
 document.write('<script src="js/tests/nyt.data.tests.js" type="text/javascript"></script> ');
+document.write('<script src="js/tests/nyt.graphics.graph.js" type="text/javascript"></script>' );
 document.write('<script src="js/tests/nyt.data.tests.plot.js" type="text/javascript"></script> ');
 
 document.write('<script src="js/project.js" type="text/javascript"></script>');

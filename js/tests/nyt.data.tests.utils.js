@@ -295,3 +295,33 @@ Canvas.prototype.noStroke = function ()
 {
     this.context.strokeStyle = 'rgba(0,0,0,0)';
 };
+
+function color()
+{
+    var r, g, b, a = 1.0;
+    var s = 'rgba';
+
+    switch (arguments.length)
+    {
+        case 1:
+            r = g = b = arguments[0];
+            break;
+        case 2:
+            r = g = b = arguments[0];
+            a = arguments[1];
+            break;
+        case 3:
+            r = arguments[0];
+            g = arguments[1];
+            b = arguments[2];
+            break;
+        case 4:
+            r = arguments[0];
+            g = arguments[1];
+            b = arguments[2];
+            a = arguments[3];
+            break;
+    }
+
+    return s + '(' + r + ',' + g + ',' + b + ',' + a + ')';
+}
