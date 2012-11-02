@@ -20,7 +20,7 @@ document.write('<script src="js/data/nyt.article.search.js" type="text/javascrip
 document.write('<script src="js/data/nyt.ressource.js" type="text/javascript"></script>');
 document.write('<script src="js/data/nyt.data.scopes.js"type="text/javascript"></script> ')
 
-document.write('<script src="js/tests/nyt.data.tests.utils.js" type="text/javascript"></script> ');
+document.write('<script src="js/tests/fi.canvas.js" type="text/javascript"></script> ');
 document.write('<script src="js/tests/nyt.data.tests.js" type="text/javascript"></script> ');
 document.write('<script src="js/tests/nyt.graphics.graph.js" type="text/javascript"></script>' );
 document.write('<script src="js/tests/nyt.data.tests.plot.js" type="text/javascript"></script> ');

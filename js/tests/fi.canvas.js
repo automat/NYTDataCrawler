@@ -7,6 +7,12 @@
 //
 //
 
+
+_InternalCanvasOptions = {};
+
+_InternalCanvasOptions.DEFAULT_WIDTH  = 300;
+_InternalCanvasOptions.DEFAULT_HEIGHT = 300;
+
 /*
  *
  *  Convenience wrapper for canvas
@@ -18,7 +24,8 @@ function Canvas(parentDomElementId)
     this.parent = document.getElementById(parentDomElementId);
     this._size = {width:300, height:300};
     this._canvas = document.createElement('canvas');
-    this.setSize(this._size.width, this._size.height);
+    this.setSize(_InternalCanvasOptions.DEFAULT_WIDTH,
+                 _InternalCanvasOptions.DEFAULT_HEIGHT);
     this._canvas.style.position = 'absolute';
     this._canvas.style.left = '0px';
     this._canvas.style.top = '0px';
@@ -26,6 +33,7 @@ function Canvas(parentDomElementId)
     this.context = this._canvas.getContext('2d');
 
     this._fontProperties = {style:'', weight:'bold', size:20, family:'Arial'};
+    this._textProperties = {lineHeight:1};
     this._applyFontStyle();
 }
 
@@ -37,7 +45,7 @@ function Canvas(parentDomElementId)
 
 Canvas.FONT_STYLE_NON_ITALIC = '';
 Canvas.FONT_STYLE_ITALIC = 'italic';
-Canvas.FONT_WEIGHT_REGULAR = 'regular';
+Canvas.FONT_WEIGHT_REGULAR = 'normal';
 Canvas.FONT_WEIGHT_BOLD = 'bold';
 
 Canvas.prototype.setFontStyle = function (style)
@@ -61,6 +69,9 @@ Canvas.prototype.setFontSize = function (size)
 Canvas.prototype.setFontFamily = function (family)
 {
     this._fontProperties.family = family;
+
+
+
     this._applyFontStyle();
 };
 
@@ -82,7 +93,6 @@ Canvas.prototype._applyFontStyle = function ()
             this._fontProperties.size + "px " +
             this._fontProperties.family;
 
-    //console.log(this.context.font);
 };
 
 /*
@@ -111,10 +121,51 @@ Canvas.prototype.setTextAlign = function (textAlign)
     this.context.textAlign = textAlign;
 };
 
+Canvas.prototype.setTextLineHeight = function(lineHeight)
+{
+    this._textProperties.lineHeight = lineHeight;
+
+};
+
 Canvas.prototype.text = function (string, x, y)
 {
     this.context.fillText(string, Math.round(x) - 0.5, Math.round(y) - 0.5);
 };
+
+Canvas.prototype.textWrap = function(string,x,y,width,height)
+{
+    var ctx = this.context;
+    var lines   = this._wrapText(string,width - ctx.measureText('A').width);
+    var size    = this._fontProperties.size;
+    var lHeight = this._textProperties.lineHeight;
+    var cHeight = 0;
+    var rHeight = 0;
+    lines.forEach(function(line,i){cHeight=i*size*lHeight;rHeight+=cHeight;ctx.fillText(line,x,y+cHeight);});
+
+    return rHeight*0.5;
+};
+
+Canvas.prototype.textWrapWithBackgroundColor = function(string,x,y,width,height,textColor,backColor)
+{
+    var ctx = this.context;
+    var lines   = this._wrapText(string,width - ctx.measureText('A').width);
+    var size    = this._fontProperties.size;
+    var lHeight = this._textProperties.lineHeight;
+    var cHeight = 0;
+    var rHeight = 0;
+    lines.forEach(function (line, i)
+    {
+        ctx.fillStyle = backColor;
+        cHeight = i * size * lHeight;
+        rHeight += cHeight;
+        ctx.fillRect(x, y, ctx.measureText(line).width, cHeight);
+        ctx.fillStyle = textColor;
+        ctx.fillText(line, x, y + cHeight);
+    });
+
+    return rHeight*0.5;
+};
+
 
 Canvas.prototype.getTextWidth = function (string)
 {
@@ -130,6 +181,39 @@ Canvas.prototype.getTextHeight = function ()
 Canvas.prototype.getTextWidth = function (string)
 {
     return this.context.measureText(string).width;
+};
+
+Canvas.prototype._wrapText = function(text, maxWidth) {
+
+    var ctx = this.context;
+
+    var words = text.split(' '),
+        lines = [],
+        line = "";
+    if (ctx.measureText(text).width < maxWidth) {
+        return [text];
+    }
+    while (words.length > 0) {
+        while (ctx.measureText(words[0]).width >= maxWidth) {
+            var tmp = words[0];
+            words[0] = tmp.slice(0, -1);
+            if (words.length > 1) {
+                words[1] = tmp.slice(-1) + words[1];
+            } else {
+                words.push(tmp.slice(-1));
+            }
+        }
+        if (ctx.measureText(line + words[0]).width < maxWidth) {
+            line += words.shift() + " ";
+        } else {
+            lines.push(line);
+            line = "";
+        }
+        if (words.length === 0) {
+            lines.push(line);
+        }
+    }
+    return lines;
 };
 
 /*

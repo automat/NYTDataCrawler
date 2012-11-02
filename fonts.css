@@ -1,0 +1,19 @@
+@font-face {
+    font-family: 'QuicksandLight';
+    src: url('resource/fonts/Quicksand_Light.otf') format('opentype');
+}
+
+@font-face {
+    font-family: 'QuicksandBook';
+    src: url('resource/fonts/Quicksand_Book.otf') format('opentype');
+}
+
+@font-face {
+    font-family: 'QuicksandBold';
+    src: url('resource/fonts/Quicksand_Bold.otf') format('opentype');
+}
+
+@font-face {
+    font-family: 'PFDinDisplayProThin';
+    src: url('resource/fonts/PFDinDisplayPro-Thin.ttf') format('truetype');
+}

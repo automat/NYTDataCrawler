@@ -4,16 +4,39 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <title>nyt</title>
+    <link rel="stylesheet" type="text/css" href="fonts.css">
+    <script src="fonts.js"></script>
     <script src="resource/imports.js"></script>
     <script src="js/imports.js"></script>
     <script type="text/javascript">
 
+        Fonts.addFont('QuicksandLight','QuicksandBook','QuicksandBold','PFDinDisplayProThin');
+        Fonts.addSourceCss('fonts.css');
+
+
+        var _bodyLoaded = false,
+            _fontLoaded = false;
+
         function init()
         {
+            if(!_bodyLoaded || !_fontLoaded)return;
+
             var project = new Project();
-
-
         }
+
+        function onBodyLoaded()
+        {
+            _bodyLoaded = true;
+            init();
+        }
+
+        function onFontLoaded()
+        {
+            _fontLoaded = true;
+            init();
+        }
+
+        Fonts.init(onFontLoaded);
 
     </script>
     <style type="text/css">
@@ -71,7 +94,7 @@
 
     </style>
 </head>
-<body onload="init();">
+<body onload="onBodyLoaded();">
 <div id='canvasContainer'></div>
 <div class="container">
     <div class="wrapper">
@@ -112,6 +135,8 @@
                 </div>
                 <div id='g62' class="third">
                 </div>
+                <div id='g70' class="full">
+                 </div>
             </div>
     </div>
 </div>

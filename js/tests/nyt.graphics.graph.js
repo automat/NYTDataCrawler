@@ -1,8 +1,20 @@
 
 
-var NYTGraphPresets = {};
+var _NYTGraphPresets = {};
+
+_NYTGraphPresets.Color = {};
+
+_NYTGraphPresets.ColorCanvas    = color(0,0);
+_NYTGraphPresets.ColorContainer = color(255,1);
+_NYTGraphPresets.ColorLabel     = color(0,1);
+_NYTGraphPresets.ColorAxes      = color(186,194,201);
 
 
+var NYTGraphOptions = {};
+
+NYTGraphOptions.RoundTen      = 'ten';
+NYTGraphOptions.RoundHundred  = 'hundred';
+NYTGraphOptions.RoundThousand = 'thousand';
 
 function NYTGraph(parentDomElementId)
 {
@@ -11,11 +23,12 @@ function NYTGraph(parentDomElementId)
     this.canvas.setSize(this.canvas.parent.offsetWidth,
                         this.canvas.parent.offsetHeight);
 
-    this._data = [];
-    this._dataLength = 0;
+    this._data              = [];
+    this._dataLength        = 0;
     this._dataResultsLength = 0;
-    this._dataTotalMax = -Infinity;
-    this._dataTotalMin =  Infinity;
+    this._dataTotalMax      = -Infinity;
+    this._dataTotalMin      =  Infinity;
+    this._dataResolution    = 5;
 
     this._margins = {canvas:   {top:30,right:30,bottom:30,left:30},
                      container:{top:30,right:40,bottom:40,left:50},
@@ -27,22 +40,28 @@ function NYTGraph(parentDomElementId)
                      inner:    {width:0,height:0},
                      graph:    {width:0,height:0}};
 
-    this._properties = {canvas:   {color:color(0,0)},
-                        container:{color:color(255,1)},
+    this._properties = {canvas:   {color:_NYTGraphPresets.ColorCanvas},
+                        container:{color:_NYTGraphPresets.ColorContainer},
                         inner:    {},
-                        label:    {color:color(0,1)},
+                        label:    {font: {family:'Arial',
+                                          color:_NYTGraphPresets.ColorLabel,
+                                          size:16,
+                                          weight:'bold'}
+                                       ,
+                                   color:_NYTGraphPresets.ColorLabel},
                         axisX:    {showStartEnd:true,
                                    frequenceTick:4,
                                    frequenceLabel:4,
                                    width:1,
-                                   color:color(186,194,201),
+                                   color:_NYTGraphPresets.ColorAxes,
                                    mainTick:{size:5,
                                              width:2},
                                    subTick: {size:0,
                                              width:1},
-                                   label:{style:null,
-                                          size:0,
-                                          color:color(186,194,201)}},
+                                   label:{font: {family:'Arial',
+                                                 color:color(150),
+                                                 size:10,
+                                                 weight:'normal'}}},
                         axisY:    {showStartEnd:true,
                                    frequenceTick:2,
                                    frequenceLabel:4,
@@ -52,15 +71,17 @@ function NYTGraph(parentDomElementId)
                                              width:2},
                                    subTick: {size:0,
                                              width:1},
-                                   label:{style:null,
-                                          size:0,
-                                          color:color(186,194,201)}}
+                                   label:{font:{family:'Arial',
+                                                color: color(150),
+                                                size:  10,
+                                                weight:'normal'}}},
+                        roundingFactor:NYTGraphOptions.RoundHundred
                         };
 
     this._plotPoints = [];
     this._plotSegWidth = 0;
 
-    this._dataResolution = 5;
+
 
 
 }
@@ -68,6 +89,8 @@ function NYTGraph(parentDomElementId)
 NYTGraph.prototype.render = function()
 {
     if(this._data.length == 0)return;
+
+
 
     this._updateSizes();
 
@@ -121,10 +144,9 @@ NYTGraph.prototype.render = function()
         c.push();
         {
             this._translateToMargin(this._margins.label);
-
+            this._setFont(this._properties.label.font);
             c.setTextBaseLine(Canvas.TEXT_BASELINE_TOP);
             c.setTextAlign(Canvas.TEXT_ALIGN_LEFT);
-            c.setFill('#000000');
             c.text(this._data[0].tokens.toString(),0,0);
         }
         c.pop();
@@ -248,6 +270,15 @@ NYTGraph.prototype._calcPlotSegWidth = function()
    this._plotSegWidth = this._sizes.graph.width / (this._dataResultsLength - 1) ;
 };
 
+NYTGraph.prototype._setFont = function(fontProperty)
+{
+    var c = this.canvas;
+    c.setFontFamily(fontProperty.family);
+    c.setFontSize(fontProperty.size);
+    c.setFontWeight(fontProperty.weight);
+    c.setFill(fontProperty.color);
+};
+
 /*
  *
  * Draw - Axis X
@@ -259,7 +290,7 @@ NYTGraph.prototype._drawAxisX = function()
     var c = this.canvas;
 
     c.setStroke(this._properties.axisX.color);
-    c.setFill(this._properties.axisY.label.color);
+    c.setFill(this._properties.axisX.label.font.color);
 
     var i = -1;
     var p = {x:0,y:0};
@@ -272,6 +303,8 @@ NYTGraph.prototype._drawAxisX = function()
         height = this._sizes.graph.height;
 
     c.setTextAlign(Canvas.TEXT_ALIGN_CENTER);
+
+    this._setFont(this._properties.axisX.label.font);
 
     while (++i < datLen)
     {
@@ -289,6 +322,7 @@ NYTGraph.prototype._drawAxisX = function()
 
         if (this._showAxisXLabel(i,axisXProperty)|| (i == datLen - 1 && axisXProperty.showStartEnd))
         {
+
             c.text(NYTDataScope.YEAR[i], p.x, p.y + axisXProperty.mainTick.size + 15);
         }
     }
@@ -326,9 +360,12 @@ NYTGraph.prototype._drawAxisY = function()
 
     var dataStep = Math.round(this._sizes.graph.height / this._dataResolution);
     var dataC = Math.round(this._dataTotalMax / this._dataResolution);
+    var value;
+
 
     c.setTextBaseLine(Canvas.TEXT_BASELINE_MIDDLE);
     c.setTextAlign(Canvas.TEXT_ALIGN_RIGHT);
+    this._setFont(this._properties.axisY.label.font);
 
     var i = -1;
     while (++i < this._dataResolution + 1)
@@ -336,8 +373,11 @@ NYTGraph.prototype._drawAxisY = function()
         p.x = 0;
         p.y = this._sizes.graph.height - i * dataStep;
 
+        value = this._properties.roundingFactor == NYTGraphOptions.RoundHundred ?
+                NYTUtils.roundHundred(dataC * i) : value
+
         c.line(p.x, p.y, p.x - 5, p.y);
-        c.text(NYTUtils.roundHundred(dataC * i), p.x - 10, p.y + 2);
+        c.text(value, p.x - 10, p.y + 2);
     }
     c.line(0, 0, 0, this._sizes.graph.height);
 
@@ -375,10 +415,30 @@ NYTGraph.prototype._drawFilledRect = function(size,color)
  * ------------------------------------------------------------------------------------------
  */
 
+/**
+   * (INTERNAL) Project a single data value to a specific height (height of the graph container).
+   *
+   * @param {number} index        The current index of the loop
+   * @param {number} segWidth     The distance between two plot points
+   * @param {number} segMaxHeight The maximum height of the point
+   * @param {number} value        The actual data value of the plotted point
+   * @param {number} maxValue     The maximum value of the data used to normalize the data value
+   *
+   * @returns {Array} Return the projected point in format [x,y]
+   */
+
 NYTGraph.prototype._projectValue = function (index, segWidth, segMaxHeight, value, maxValue)
 {
     return [index * segWidth,segMaxHeight- segMaxHeight * value / maxValue];
 };
+
+/**
+   * (INTERNAL) Project all plot points according to the data and specified margins.
+   *
+   * @param {Array} points The plot point array
+   * @param {Array} data   The data array
+   *
+   */
 
 NYTGraph.prototype._projectPoints = function(points,data)
 {
@@ -391,12 +451,19 @@ NYTGraph.prototype._projectPoints = function(points,data)
 
 };
 
-
 /*
  *
  * Data - Add data to graph
  * ------------------------------------------------------------------------------------------
  */
+
+/**
+   * Add Data to the graph.
+   *
+   * @param {Array} data The data to be added
+   *
+   * @returns {Object} The graph
+   */
 
 NYTGraph.prototype.addData = function(data)
 {
@@ -413,8 +480,6 @@ NYTGraph.prototype.addData = function(data)
     this._dataLength = this._data.length;
     this._allocateNewPlotPloints();
     this._calcDataTotalMaxMin();
-
-
 
     return this;
 };
@@ -433,7 +498,7 @@ NYTGraph.prototype._allocateNewPlotPloints = function()
         pp.push([0,0]);
     }
 };
-
+  
 NYTGraph.prototype._calcDataTotalMaxMin = function()
 {
     var i = -1;

@@ -15,37 +15,42 @@ function NYTTestPlot()
     this.graphCanvasMargins = {top:5,right:5,bottom:5,left:5};
     this.graphs = [];
 
-    this.addGraph('g00',this.mergeData(term_terrorist_scope_complete,'Terrorist'));
+    this.addGraph('g00',this.mergeData(term_terrorist_scope_complete,'TERRORIST'));
         //.addData(this.mergeData(term_iraq_scope_complete, 'Bin Laden'));
     //this.graphs[0].render();
 
-    this.addGraph('g01', this.mergeData(term_bin_laden_scope_complete, 'Bin Laden'));
-    this.addGraph('g02',this.mergeData(term_al_quida_scope_complete,'Al-Qaida'));
+    this.addGraph('g01', this.mergeData(term_bin_laden_scope_complete, 'BIN LADEN'));
+    this.addGraph('g02',this.mergeData(term_al_quida_scope_complete,'AL-QAIDA'));
 
-    this.addGraph('g10',this.mergeData(term_afghanistan_scope_complete,'Afghanistan'));
-    this.addGraph('g11',this.mergeData(term_iran_scope_complete,'Iran'));
-    this.addGraph('g12',this.mergeData(term_iraq_scope_complete,'Iraq'));
+    this.addGraph('g10',this.mergeData(term_afghanistan_scope_complete,'AFGHANISTAN'));
+    this.addGraph('g11',this.mergeData(term_iran_scope_complete,'IRAN'));
+    this.addGraph('g12',this.mergeData(term_iraq_scope_complete,'IRAQ'));
 
-    this.addGraph('g20',this.mergeData(term_war_scope_complete,'War'))
-        .addData(this.mergeData(term_peace_scope_complete,'Peace'));
+    this.addGraph('g20',this.mergeData(term_war_scope_complete,'WAR / PEACE'))
+        .addData(this.mergeData(term_peace_scope_complete,'PEACE'));
 
-    this.addGraph('g30',this.mergeData(term_good_scope_complete,'good'))
-        .addData(this.mergeData(term_bad_scope_complete,'bad'))
-        .addData(this.mergeData(term_evil_scope_complete,'evil'));
+    this.addGraph('g30',this.mergeData(term_good_scope_complete,'GOOD / BAD / EVIL'))
+        .addData(this.mergeData(term_bad_scope_complete,'BAD'))
+        .addData(this.mergeData(term_evil_scope_complete,'EVIL'));
 
-    this.addGraph('g40',this.mergeData(term_germany_scope_complete,'Germany'));
-    this.addGraph('g41',this.mergeData(term_japan_scope_complete,'Japan'));
+    this.addGraph('g40',this.mergeData(term_germany_scope_complete,'GERMANY'));
+    this.addGraph('g41',this.mergeData(term_japan_scope_complete,'JAPAN'));
 
-    this.addGraph('g42',this.mergeData(term_america_scope_complete,'America'));
-    this.addGraph('g43',this.mergeData(term_china_scope_complete,'China'));
+    this.addGraph('g42',this.mergeData(term_america_scope_complete,'AMERICA'));
+    this.addGraph('g43',this.mergeData(term_china_scope_complete,'CHINA'));
 
-    this.addGraph('g50',this.mergeData(term_hitler_scope_complete,'Hitler'));
-       this.addGraph('g51',this.mergeData(term_stalin_scope_complete,'Stalin'));
-    this.addGraph('g52',this.mergeData(term_bush_scope_complete,'Bush'));
+    this.addGraph('g50',this.mergeData(term_hitler_scope_complete,'HITLER'));
+       this.addGraph('g51',this.mergeData(term_stalin_scope_complete,'STALIN'));
+    this.addGraph('g52',this.mergeData(term_bush_scope_complete,'BUSH'));
 
-    this.addGraph('g60',this.mergeData(term_good_scope_complete,'good'));
-    this.addGraph('g61',this.mergeData(term_bad_scope_complete,'bad'));
-    this.addGraph('g62',this.mergeData(term_evil_scope_complete,'evil'));
+    this.addGraph('g60',this.mergeData(term_good_scope_complete,'GOOD'));
+    this.addGraph('g61',this.mergeData(term_bad_scope_complete,'BAD'));
+    this.addGraph('g62',this.mergeData(term_evil_scope_complete,'EVIL'));
+
+
+    this.addGraph('g70',this.mergeData(term_bush_scope_complete,'BUSH / OBAMA'))
+        .addData(this.mergeData(term_obama_scope_complete),'OBAMA');
+
 
     var i = -1;
 
@@ -63,13 +68,28 @@ NYTTestPlot.prototype.addGraph = function(id,data)
     var g = new NYTGraph(id);
     g.addData(data);
     g.setMarginsCanvas(this.graphCanvasMargins);
+    //g.canvas.setFontFamily('QuicksandBook');
+    //g.canvas.setFontSize(10);
 
     var properties = g.getProperties();
 
     properties.container.color  = color(0,0);
     properties.axisX.color      = color(180);
-    properties.axisX.label.color = color(180);
-    properties.axisY.label.color = color(180);
+    properties.axisX.label.color = color(150);
+    properties.axisY.label.color = color(150);
+
+    properties.label.font.family = 'PFDinDisplayProThin';
+    properties.label.font.size   = 14;
+    properties.label.font.color  = color(50);
+
+    g.setMarginsLabel({top:50,left:70});
+
+
+
+    properties.axisX.label.font.family = 'PFDinDisplayProThin';
+    properties.axisY.label.font.family = 'PFDinDisplayProThin';
+    properties.axisX.label.font.color  = color(80);
+    properties.axisY.label.font.color  = color(80);
 
     this.graphs.push(g);
     return g;

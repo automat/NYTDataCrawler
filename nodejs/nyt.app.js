@@ -27,7 +27,7 @@ function crawl()
     var dateScope = scopes.SCOPES_DATE;
 
     var searchQueries = [
-        ["evil"]
+        ["obama"]
     ];
 
     var returnFacets = [new nytas.NYTFacet(nytas.RETURN_GEO)];
@@ -55,7 +55,7 @@ function crawl()
 
     crawler.setInterval(100)
            .setSaveFilePath('../data/')
-           .setSaveFilename('term_evil_complete.json')
+           .setSaveFilename('term_obama_complete.json')
            .setRequestList(crawlRequest)
            .crawl();
 }
